@@ -62,7 +62,7 @@ function updateTimer() {
 
 }
 
-async function getFeedback() {
+ async function getFeedback() {
   const answer = document.getElementById("answer").value;
   const feedbackText = document.getElementById("feedbackText");
 
