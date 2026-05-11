@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InterviewFlow AI</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <body>
+
+        <script>
+            if (localStorage.getItem("isLoggedIn") !== "true") {
+                window.location.href = "login.html";
+            }
+        </script>
+
+        <div class="app">
+
+            <div class="app">
+                <header>
+
+                    <div class="user-bar">
+                        <span id="userName">Welcome User</span>
+
+                        <h1>InterviewFlowAI</h1>
+                        <p>Practice interviews with AI and improve your answers.</p>
+
+                        <button onclick="logoutUser()">
+                            Logout
+                        </button>
+                    </div>
+
+                </header>
+
+                <section class="card">
+                    <h2>Select Interview Role</h2>
+
+                    <select id="role">
+                        <option value="Frontend Developer">Frontend Developer</option>
+                        <option value="Backend Developer">Backend Developer</option>
+                        <option value="Java Developer">Java Developer</option>
+                        <option value="C++ Developer">C++ Developer</option>
+                        <option value="HR Interview">HR Interview</option>
+                    </select>
+
+                    <select id="difficulty">
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+
+                    <button onclick="getQuestion()">Generate Question</button>
+
+                    <div class="timer-box">
+                        ⏱️ Time Left: <span id="timer">02:00</span>
+                    </div>
+                </section>
+
+                <section class="card" id="questionBox">
+                    <h2>Interview Question</h2>
+                    <p id="questionText">Your question will appear here...</p>
+
+                    <button onclick="speakQuestion()">🔊 Speak Question</button>
+                </section>
+
+                <section class="card">
+                    <h2>Your Answer</h2>
+
+                    <textarea id="answer" placeholder="Type your answer here..."></textarea>
+
+                    <button onclick="startVoiceInput()">🎤 Start Voice Answer</button>
+                    <button onclick="getFeedback()">Get Feedback</button>
+                </section>
+
+                <section class="card">
+                    <h2>AI Performance Report</h2>
+
+                    <div id="performanceReport">
+                        Your AI report will appear here...
+                    </div>
+
+                    <button onclick="downloadReportPDF()">
+                        📄 Download Report PDF
+                    </button>
+
+                </section>
+
+                <section class="card">
+                    <h2>Interview History</h2>
+
+                    <div class="stats">
+                        <p>⭐ Average Score: <span id="avgScore">0</span></p>
+                        <p>🏆 Best Score: <span id="bestScore">0</span></p>
+                    </div>
+
+                    <div id="historyList"></div>
+                </section>
+
+                <button onclick="clearHistory()">
+                    🗑️ Clear History
+                </button>
+            </div>
+
+            [22:28, 10/05/2026] vivekkhatik: generatePerformanceReport();
+            [22:29, 10/05/2026] vivekkhatik: generatePerformanceReport();
+            [22:30, 10/05/2026] vivekkhatik: <section class="card">
+                <h2>AI Performance Report</h2>
+
+                <div id="performanceReport">
+                    Your AI report will appear here...
+                </div>
+            </section>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+            <script src="script.js"></script>
+    </body>
+
+</html>
