@@ -69,7 +69,7 @@ async function getQuestion() {
     questionText.innerHTML = `<div class="loader"></div>`;
 
     try {
-        const response = await fetch("https://interviewflow-ai-t2yn.onrender.com", {
+        const response = await fetch("/question",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -121,7 +121,7 @@ async function getFeedback() {
     feedbackText.innerHTML = `<div class="loader"></div>`;
 
     try {
-        const response = await fetch("https://interviewflow-ai-t2yn.onrender.com", {
+        const response = await fetch("/feedback", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
