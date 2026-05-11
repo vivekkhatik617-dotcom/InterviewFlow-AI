@@ -59,94 +59,57 @@ function updateTimer() {
     const seconds = timeLeft % 60;
 
     timer.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-}
 
-async function getQuestion() {
-    const role = document.getElementById("role").value;
-    const difficulty = document.getElementById("difficulty").value;
-    const questionText = document.getElementById("questionText");
-
-    questionText.innerHTML = `<div class="loader"></div>`;
-
-    try {
-        const response = await fetch("/question",{
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                role,
-                difficulty
-            })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.question) {
-            questionText.innerText = data.error || "Question generate nahi hua. Backend check karo.";
-            return;
-        }
-
-        currentQuestion = data.question
-            .replace(/\*/g, "")
-            .replace(/\n/g, " ")
-            .slice(0, 180);
-        typeText(questionText, data.question);
-
-        startTimer();
-
-    } catch (error) {
-        questionText.innerText = "Error: Backend server is not running.";
-        console.log(error);
-    }
 }
 
 async function getFeedback() {
-    const answer = document.getElementById("answer").value;
-    const feedbackText = document.getElementById("feedbackText");
+  const answer = document.getElementById("answer").value;
+  const feedbackText = document.getElementById("feedbackText");
 
-    if (!currentQuestion) {
-        alert("First generate a question.");
-        return;
+  if (!currentQuestion) {
+    alert("First generate a question.");
+    return;
+  }
+
+  if (!answer.trim()) {
+    alert("Please write your answer.");
+    return;
+  }
+
+  clearInterval(timerInterval);
+  timeTaken = totalTime - timeLeft;
+
+  feedbackText.innerHTML = `<div class="loader"></div>`;
+
+  try {
+    const response = await fetch("/feedback", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        question: currentQuestion,
+        answer: answer
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.feedback) {
+      feedbackText.innerText =
+        data.error || "Feedback generate nahi hua. Backend check karo.";
+      return;
     }
 
-    if (!answer.trim()) {
-        alert("Please write your answer.");
-        return;
-    }
+    typeText(feedbackText, data.feedback);
 
-    clearInterval(timerInterval);
-    timeTaken = totalTime - timeLeft;
+    saveInterview(currentQuestion, answer, data.feedback, timeTaken);
 
-    feedbackText.innerHTML = `<div class="loader"></div>`;
-
-    try {
-        const response = await fetch("/feedback", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                question: currentQuestion,
-                answer: answer
-            })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.feedback) {
-            feedbackText.innerText = data.error || "Feedback generate nahi hua. Backend check karo.";
-            return;
-        }
-
-        typeText(feedbackText, data.feedback);
-
-        saveInterview(currentQuestion, answer, data.feedback, timeTaken);
-
-    } catch (error) {
-        feedbackText.innerText = "Error: Backend server is not running.";
-        console.log(error);
-    }
+  } catch (error) {
+    feedbackText.innerText =
+      "⏳ Server waking up... Please wait a few seconds and try again.";
+    console.log(error);
+  }
 }
 
 function speakQuestion() {
