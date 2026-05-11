@@ -69,7 +69,7 @@ async function getQuestion() {
     questionText.innerHTML = `<div class="loader"></div>`;
 
     try {
-        const response = await fetch("http://localhost:3000/question", {
+        const response = await fetch("https://interviewflow-ai-t2yn.onrender.com", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
