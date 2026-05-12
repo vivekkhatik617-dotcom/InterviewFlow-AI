@@ -10,167 +10,127 @@
 
 <body>
 
-    <body>
+    <script>
+        if (localStorage.getItem("isLoggedIn") !== "true") {
+            window.location.href = "login.html";
+        }
+    </script>
 
-        <script>
-            if (localStorage.getItem("isLoggedIn") !== "true") {
-                window.location.href = "login.html";
-            }
-        </script>
+    <div class="app">
 
-        <div class="app">
+        <header>
+            <div class="user-bar">
+                <span id="userName">Welcome User</span>
 
-            <div class="app">
-                <header>
+                <div>
+                    <h1>InterviewFlowAI</h1>
+                    <p>Practice interviews with AI and improve your answers.</p>
+                </div>
 
-                    <div class="user-bar">
-                        <span id="userName">Welcome User</span>
+                <button onclick="logoutUser()">Logout</button>
+            </div>
+        </header>
 
-                        <h1>InterviewFlowAI</h1>
-                        <p>Practice interviews with AI and improve your answers.</p>
-
-                        <button onclick="logoutUser()">
-                            Logout
-                        </button>
-                    </div>
-
-                </header>
-
-                <section class="card">
-                    <h2>Select Interview Role</h2>
-
-                    <select id="role">
-                        <option value="Frontend Developer">Frontend Developer</option>
-                        <option value="Backend Developer">Backend Developer</option>
-                        <option value="Java Developer">Java Developer</option>
-                        <option value="C++ Developer">C++ Developer</option>
-                        <option value="HR Interview">HR Interview</option>
-                    </select>
-
-                    <select id="category">
-                        <option value="Frontend">Frontend</option>
-                        <option value="Backend">Backend</option>
-                        <option value="React">React</option>
-                        <option value="Node.js">Node.js</option>
-                        <option value="Java">Java</option>
-                        <option value="Python">Python</option>
-                        <option value="DSA">DSA</option>
-                        <option value="HR Interview">HR Interview</option>
-                        <option value="System Design">System Design</option>
-                    </select>
-
-                    <select id="difficulty">
-                        <option value="Easy">Easy</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Hard">Hard</option>
-                    </select>
-
-                    <section class="card profile-card">
-
-                        <h2>👤 User Profile</h2>
-
-                        <p>
-                            <b>Name:</b>
-                            <span id="profileName">User</span>
-                        </p>
-
-                        <p>
-                            <b>Email:</b>
-                            <span id="profileEmail">user@email.com</span>
-                        </p>
-
-                        <div class="profile-stats">
-
-                            <p>
-                                📄 Total Interviews:
-                                <span id="profileTotal">0</span>
-                            </p>
-
-                            <p>
-                                ⭐ Average Score:
-                                <span id="profileAvg">0</span>
-                            </p>
-
-                            <p>
-                                🏆 Best Score:
-                                <span id="profileBest">0</span>
-                            </p>
-
-                            <p>
-                                ⏱️ Total Practice Time:
-                                <span id="profileTime">00:00</span>
-                            </p>
-
-                        </div>
-
-                    </section>
-
-                    <button onclick="getQuestion()">Generate Question</button>
-
-                    <div class="timer-box">
-                        ⏱️ Time Left: <span id="timer">02:00</span>
-                    </div>
-                </section>
-
-                <section class="card" id="questionBox">
-                    <h2>Interview Question</h2>
-                    <p id="questionText">Your question will appear here...</p>
-
-                    <button onclick="speakQuestion()">🔊 Speak Question</button>
-                </section>
-
-                <section class="card">
-                    <h2>Your Answer</h2>
-
-                    <textarea id="answer" placeholder="Type your answer here..."></textarea>
-
-                    <button onclick="startVoiceInput()">🎤 Start Voice Answer</button>
-                    <button onclick="getFeedback()">Get Feedback</button>
-                    <div id="feedbackText"></div>
-                </section>
-
-                <section class="card">
-                    <h2>AI Performance Report</h2>
-
-                    <div id="performanceReport">
-                        Your AI report will appear here...
-                    </div>
-
-                    <button onclick="downloadReportPDF()">
-                        📄 Download Report PDF
-                    </button>
-
-                </section>
-
-                <section class="card">
-                    <h2>Interview History</h2>
-
-                    <div class="stats">
-                        <p>⭐ Average Score: <span id="avgScore">0</span></p>
-                        <p>🏆 Best Score: <span id="bestScore">0</span></p>
-                    </div>
-
-                    <div id="historyList"></div>
-                </section>
-
-                <button onclick="clearHistory()">
-                    🗑️ Clear History
-                </button>
+        <section class="mini-profile">
+            <div>
+                <h3>👤 User Profile</h3>
+                <p id="profileEmail">No Email</p>
             </div>
 
-            [22:28, 10/05/2026] vivekkhatik: generatePerformanceReport();
-            [22:29, 10/05/2026] vivekkhatik: generatePerformanceReport();
-            [22:30, 10/05/2026] vivekkhatik: <section class="card">
-                <h2>AI Performance Report</h2>
+            <div class="mini-stats">
+                <span>📄 <b id="profileTotal">0</b></span>
+                <span>⭐ <b id="profileAvg">0</b></span>
+                <span>🏆 <b id="profileBest">0</b></span>
+                <span>⏱️ <b id="profileTime">00:00</b></span>
+            </div>
+        </section>
 
-                <div id="performanceReport">
-                    Your AI report will appear here...
-                </div>
-            </section>
+        <section class="card">
+            <h2>Select Interview Role</h2>
 
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+            <select id="role">
+                <option value="Frontend Developer">Frontend Developer</option>
+                <option value="Backend Developer">Backend Developer</option>
+                <option value="Java Developer">Java Developer</option>
+                <option value="C++ Developer">C++ Developer</option>
+                <option value="HR Interview">HR Interview</option>
+            </select>
 
-            <script src="script.js"></script>
-    </body>
+            <select id="category">
+                <option value="Frontend">Frontend</option>
+                <option value="Backend">Backend</option>
+                <option value="React">React</option>
+                <option value="Node.js">Node.js</option>
+                <option value="Java">Java</option>
+                <option value="Python">Python</option>
+                <option value="DSA">DSA</option>
+                <option value="HR Interview">HR Interview</option>
+                <option value="System Design">System Design</option>
+            </select>
+
+            <select id="difficulty">
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+
+            <button onclick="getQuestion()">Generate Question</button>
+
+            <div class="timer-box">
+                ⏱️ Time Left: <span id="timer">02:00</span>
+            </div>
+        </section>
+
+        <section class="card" id="questionBox">
+            <h2>Interview Question</h2>
+            <p id="questionText">Your question will appear here...</p>
+
+            <button onclick="speakQuestion()">🔊 Speak Question</button>
+        </section>
+
+        <section class="card">
+            <h2>Your Answer</h2>
+
+            <textarea id="answer" placeholder="Type your answer here..."></textarea>
+
+            <button onclick="startVoiceInput()">🎤 Start Voice Answer</button>
+            <button onclick="getFeedback()">Get Feedback</button>
+
+            <div id="feedbackText"></div>
+        </section>
+
+        <section class="card">
+            <h2>AI Performance Report</h2>
+
+            <div id="performanceReport">
+                Your AI report will appear here...
+            </div>
+
+            <button onclick="downloadReportPDF()">
+                📄 Download Report PDF
+            </button>
+        </section>
+
+        <section class="card">
+            <h2>Interview History</h2>
+
+            <div class="stats">
+                <p>⭐ Average Score: <span id="avgScore">0</span></p>
+                <p>🏆 Best Score: <span id="bestScore">0</span></p>
+            </div>
+
+            <div id="historyList"></div>
+        </section>
+
+        <button onclick="clearHistory()">
+            🗑️ Clear History
+        </button>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+
+</body>
 
 </html>
