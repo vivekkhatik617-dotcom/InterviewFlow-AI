@@ -119,54 +119,74 @@ function updateTimer() {
 
 }
 
- async function getFeedback() {
-  const answer = document.getElementById("answer").value;
-  const feedbackText = document.getElementById("feedbackText");
+async function getFeedback() {
 
-  if (!currentQuestion) {
-    alert("First generate a question.");
-    return;
-  }
+    const answer =
+        document.getElementById("answer").value;
 
-  if (!answer.trim()) {
-    alert("Please write your answer.");
-    return;
-  }
+    const feedbackText =
+        document.getElementById("feedbackText");
 
-  clearInterval(timerInterval);
-  timeTaken = totalTime - timeLeft;
-
-  feedbackText.innerHTML = `<div class="loader"></div>`;
-
-  try {
-    const response = await fetch("/feedback", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        question: currentQuestion,
-        answer: answer
-      })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok || !data.feedback) {
-      feedbackText.innerText =
-        data.error || "Feedback generate nahi hua. Backend check karo.";
-      return;
+    if (!currentQuestion) {
+        alert("First generate a question.");
+        return;
     }
 
-    typeText(feedbackText, data.feedback);
+    if (!answer.trim()) {
+        alert("Please write your answer.");
+        return;
+    }
 
-    saveInterview(currentQuestion, answer, data.feedback, timeTaken);
+    clearInterval(timerInterval);
 
-  } catch (error) {
-    feedbackText.innerText =
-      "⏳ Server waking up... Please wait a few seconds and try again.";
-    console.log(error);
-  }
+    timeTaken = totalTime - timeLeft;
+
+    feedbackText.innerHTML =
+        `<div class="loader"></div>`;
+
+    try {
+
+        const response = await fetch("/feedback", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                question: currentQuestion,
+                answer: answer
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.feedback) {
+
+            feedbackText.innerText =
+                "Feedback generate nahi hua.";
+
+            return;
+        }
+
+        typeText(feedbackText, data.feedback);
+
+        saveInterview(
+            currentQuestion,
+            answer,
+            data.feedback,
+            timeTaken
+        );
+
+    } catch (error) {
+
+        feedbackText.innerText =
+            "⏳ Server waking up... Please wait a few seconds and try again.";
+
+        console.log(error);
+    }
 }
 
 function speakQuestion() {
