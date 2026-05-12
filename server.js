@@ -1,3 +1,8 @@
+const multer = require("multer");
+const pdfParse = require("pdf-parse");
+
+const upload = multer({ storage: multer.memoryStorage() });
+
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -114,6 +119,49 @@ Improved Answer:
 I would first understand the problem, reproduce it, debug the root cause, and then fix it using proper technical practices. After that, I would test the solution with edge cases to make sure it is stable.`
         });
     }
+});
+
+app.post("/analyze-resume", upload.single("resume"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.json({ analysis: "No resume file uploaded." });
+    }
+
+    const pdfData = await pdfParse(req.file.buffer);
+    const resumeText = pdfData.text.slice(0, 6000);
+
+    const prompt = `
+Analyze this resume and give:
+
+1. Overall Resume Score out of 10
+2. Strengths
+3. Weaknesses
+4. Missing Skills
+5. Best Suitable Job Roles
+6. 3 interview questions based on this resume
+
+Keep it short and useful.
+
+Resume:
+${resumeText}
+`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+
+    res.json({
+      analysis: response.text,
+    });
+
+  } catch (error) {
+    console.log("RESUME ERROR:", error.message || error);
+
+    res.json({
+      analysis: "Resume analysis failed. Try again later."
+    });
+  }
 });
 
 

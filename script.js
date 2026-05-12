@@ -636,3 +636,33 @@ function loadTheme() {
 }
 
 loadTheme();
+
+async function analyzeResume() {
+  const fileInput = document.getElementById("resumeFile");
+  const result = document.getElementById("resumeResult");
+
+  if (!fileInput.files.length) {
+    alert("Please upload a PDF resume.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("resume", fileInput.files[0]);
+
+  result.innerHTML = `<div class="loader"></div>`;
+
+  try {
+    const response = await fetch("/analyze-resume", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    result.innerText = data.analysis;
+
+  } catch (error) {
+    result.innerText = "Resume analysis failed.";
+    console.log(error);
+  }
+}
