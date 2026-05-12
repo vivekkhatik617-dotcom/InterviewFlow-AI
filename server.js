@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/question", async (req, res) => {
-    const { role = "Developer", difficulty = "Medium" } = req.body || {};
+   const { role = "Developer", difficulty = "Medium", category = "General" } = req.body || {};
 
     try {
         const prompt = `
@@ -37,6 +37,7 @@ Rules:
 
 Role: ${role}
 Difficulty: ${difficulty}
+Category: ${category}
 `;
 
         const response = await ai.models.generateContent({
