@@ -35,106 +35,119 @@
             </div>
         </header>
 
-        <section class="mini-profile">
-            <div>
-                <h3>👤 User Profile</h3>
-                <p id="profileEmail">No Email</p>
-            </div>
+        <div class="dashboard">
 
-            <div class="mini-stats">
-                <span>📄 <b id="profileTotal">0</b></span>
-                <span>⭐ <b id="profileAvg">0</b></span>
-                <span>🏆 <b id="profileBest">0</b></span>
-                <span>⏱️ <b id="profileTime">00:00</b></span>
-            </div>
-        </section>
+            <aside class="sidebar">
 
-        <section class="card">
-            <h2>Select Interview Role</h2>
+                <section class="mini-profile">
+                    <div>
+                        <h3>👤 User Profile</h3>
+                        <p id="profileEmail">No Email</p>
+                    </div>
 
-            <select id="role">
-                <option value="Frontend Developer">Frontend Developer</option>
-                <option value="Backend Developer">Backend Developer</option>
-                <option value="Java Developer">Java Developer</option>
-                <option value="C++ Developer">C++ Developer</option>
-                <option value="HR Interview">HR Interview</option>
-            </select>
+                    <div class="mini-stats">
+                        <span>📄 <b id="profileTotal">0</b> Interviews</span>
+                        <span>⭐ <b id="profileAvg">0</b> Avg</span>
+                        <span>🏆 <b id="profileBest">0</b> Best</span>
+                        <span>⏱️ <b id="profileTime">00:00</b></span>
+                    </div>
+                </section>
 
-            <select id="category">
-                <option value="Frontend">Frontend</option>
-                <option value="Backend">Backend</option>
-                <option value="React">React</option>
-                <option value="Node.js">Node.js</option>
-                <option value="Java">Java</option>
-                <option value="Python">Python</option>
-                <option value="DSA">DSA</option>
-                <option value="HR Interview">HR Interview</option>
-                <option value="System Design">System Design</option>
-            </select>
+            </aside>
 
-            <select id="difficulty">
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
-            </select>
+            <main class="main-content">
 
-            <button onclick="getQuestion()">Generate Question</button>
+                <section class="card">
+                    <h2>Select Interview Role</h2>
 
-            <div class="timer-box">
-                ⏱️ Time Left: <span id="timer">02:00</span>
-            </div>
-        </section>
+                    <div class="select-grid">
+                        <select id="role">
+                            <option value="Frontend Developer">Frontend Developer</option>
+                            <option value="Backend Developer">Backend Developer</option>
+                            <option value="Java Developer">Java Developer</option>
+                            <option value="C++ Developer">C++ Developer</option>
+                            <option value="HR Interview">HR Interview</option>
+                        </select>
 
-        <section class="card" id="questionBox">
-            <h2>Interview Question</h2>
-            <p id="questionText">Your question will appear here...</p>
+                        <select id="category">
+                            <option value="Frontend">Frontend</option>
+                            <option value="Backend">Backend</option>
+                            <option value="React">React</option>
+                            <option value="Node.js">Node.js</option>
+                            <option value="Java">Java</option>
+                            <option value="Python">Python</option>
+                            <option value="DSA">DSA</option>
+                            <option value="HR Interview">HR Interview</option>
+                            <option value="System Design">System Design</option>
+                        </select>
 
-            <button onclick="speakQuestion()">🔊 Speak Question</button>
-        </section>
+                        <select id="difficulty">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
 
-        <section class="card">
-            <h2>Your Answer</h2>
+                    <button onclick="getQuestion()">Generate Question</button>
 
-            <textarea id="answer" placeholder="Type your answer here..."></textarea>
+                    <div class="timer-box">
+                        ⏱️ Time Left: <span id="timer">02:00</span>
+                    </div>
+                </section>
 
-            <button onclick="startVoiceInput()">🎤 Start Voice Answer</button>
-            <button onclick="getFeedback()">Get Feedback</button>
+                <section class="card" id="questionBox">
+                    <h2>Interview Question</h2>
+                    <p id="questionText">Your question will appear here...</p>
 
-            <div id="feedbackText"></div>
-        </section>
+                    <button onclick="speakQuestion()">🔊 Speak Question</button>
+                </section>
 
-        <section class="card">
-            <h2>AI Performance Report</h2>
+                <section class="card">
+                    <h2>Your Answer</h2>
 
-            <div id="performanceReport">
-                Your AI report will appear here...
-            </div>
+                    <textarea id="answer" placeholder="Type your answer here..."></textarea>
 
-            <button onclick="downloadReportPDF()">
-                📄 Download Report PDF
-            </button>
-        </section>
+                    <button onclick="startVoiceInput()">🎤 Start Voice Answer</button>
+                    <button onclick="getFeedback()">Get Feedback</button>
 
-        <section class="card">
-            <h2>📊 Analytics Dashboard</h2>
+                    <div id="feedbackText"></div>
+                </section>
 
-            <canvas id="scoreChart"></canvas>
-        </section>
+                <section class="card">
+                    <h2>AI Performance Report</h2>
 
-        <section class="card">
-            <h2>Interview History</h2>
+                    <div id="performanceReport">
+                        Your AI report will appear here...
+                    </div>
 
-            <div class="stats">
-                <p>⭐ Average Score: <span id="avgScore">0</span></p>
-                <p>🏆 Best Score: <span id="bestScore">0</span></p>
-            </div>
+                    <button onclick="downloadReportPDF()">
+                        📄 Download Report PDF
+                    </button>
+                </section>
 
-            <div id="historyList"></div>
-        </section>
+                <section class="card">
+                    <h2>📊 Analytics Dashboard</h2>
+                    <canvas id="scoreChart"></canvas>
+                </section>
 
-        <button onclick="clearHistory()">
-            🗑️ Clear History
-        </button>
+                <section class="card">
+                    <h2>Interview History</h2>
+
+                    <div class="stats">
+                        <p>⭐ Average Score: <span id="avgScore">0</span></p>
+                        <p>🏆 Best Score: <span id="bestScore">0</span></p>
+                    </div>
+
+                    <div id="historyList"></div>
+                </section>
+
+                <button onclick="clearHistory()">
+                    🗑️ Clear History
+                </button>
+
+            </main>
+
+        </div>
 
     </div>
 

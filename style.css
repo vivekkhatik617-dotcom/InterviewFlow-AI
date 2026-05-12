@@ -396,3 +396,58 @@ body.light-mode .history-card {
         align-items: flex-start;
     }
 }
+
+.dashboard {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.sidebar {
+    width: 280px;
+    position: sticky;
+    top: 20px;
+}
+
+.main-content {
+    flex: 1;
+}
+
+.select-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.select-grid select {
+    margin-bottom: 15px;
+}
+
+.sidebar .mini-profile {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sidebar .mini-stats {
+    flex-direction: column;
+    width: 100%;
+}
+
+.sidebar .mini-stats span {
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    .dashboard {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        position: static;
+    }
+
+    .select-grid {
+        grid-template-columns: 1fr;
+    }
+}
