@@ -50,6 +50,63 @@ function startTimer() {
         }
     }, 1000);
 }
+
+async function getQuestion() {
+
+    const role =
+        document.getElementById("role").value;
+
+    const difficulty =
+        document.getElementById("difficulty").value;
+
+    const questionText =
+        document.getElementById("questionText");
+
+    questionText.innerHTML =
+        `<div class="loader"></div>`;
+
+    startTimer();
+
+    try {
+
+        const response = await fetch("/question", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                role,
+                difficulty
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.question) {
+
+            questionText.innerText =
+                "Question generate nahi hua.";
+
+            return;
+        }
+
+        currentQuestion = data.question;
+
+        typeText(questionText, data.question);
+
+    } catch (error) {
+
+        questionText.innerText =
+            "⏳ Server waking up... Please wait a few seconds and try again.";
+
+        console.log(error);
+    }
+}
+
 function updateTimer() {
     const timer = document.getElementById("timer");
 
