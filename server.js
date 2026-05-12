@@ -115,6 +115,9 @@ I would first understand the problem, reproduce it, debug the root cause, and th
     }
 });
 
-app.listen(3000, () => {
-    console.log("Server running on https://interviewflow-ai-t2yn.onrender.com");
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
