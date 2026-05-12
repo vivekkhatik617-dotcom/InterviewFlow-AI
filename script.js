@@ -617,3 +617,21 @@ function loadAnalyticsChart() {
 }
 
 loadAnalyticsChart();
+
+function toggleTheme() {
+    document.body.classList.toggle("light-mode");
+
+    const isLight = document.body.classList.contains("light-mode");
+
+    localStorage.setItem("theme", isLight ? "light" : "dark");
+}
+
+function loadTheme() {
+    const theme = localStorage.getItem("theme");
+
+    if (theme === "light") {
+        document.body.classList.add("light-mode");
+    }
+}
+
+loadTheme();
