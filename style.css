@@ -1,0 +1,398 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: #050505;
+    color: #ffffff;
+    padding: 30px;
+}
+
+.app {
+    max-width: 980px;
+    margin: auto;
+    animation: fadeUp 0.8s ease;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+header h1 {
+    font-size: 46px;
+    color: #ffffff;
+    text-shadow: none;
+    letter-spacing: -1px;
+}
+
+header p {
+    margin-top: 8px;
+    color: #d4d4d4;
+}
+
+.card,
+.auth-card,
+.mini-profile,
+.history-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: none;
+    backdrop-filter: blur(14px);
+}
+
+.card,
+.auth-card {
+    padding: 28px;
+    border-radius: 22px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.7s ease;
+    transition: 0.3s;
+}
+
+.card:hover,
+.auth-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.28);
+}
+
+.auth-card {
+    max-width: 430px;
+    margin: 80px auto;
+}
+
+.auth-card h1,
+.card h2,
+.mini-profile h3 {
+    color: #ffffff;
+}
+
+.auth-card h1 {
+    font-size: 38px;
+    margin-bottom: 22px;
+}
+
+.card h2 {
+    margin-bottom: 15px;
+}
+
+select,
+textarea,
+input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    outline: none;
+    margin-bottom: 15px;
+    font-size: 16px;
+    transition: 0.3s;
+    background: rgba(255, 255, 255, 0.10);
+    color: #ffffff;
+}
+
+select option {
+    color: #000000;
+    background: #ffffff;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #bdbdbd;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
+}
+
+textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+button {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #ffffff;
+    padding: 14px 26px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #000000;
+    color: #ffffff;
+    transform: scale(1.04);
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+.auth-card button {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.auth-card p {
+    text-align: center;
+    margin-top: 18px;
+}
+
+.auth-card a {
+    color: #ffffff;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+#questionText {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #ffffff;
+}
+
+pre {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    color: #ffffff;
+}
+
+#feedbackText {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 5px solid #ffffff;
+    font-size: 17px;
+    white-space: pre-line;
+    line-height: 1.8;
+}
+
+.loader {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.20);
+    border-top: 4px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.timer-box {
+    margin-top: 18px;
+    padding: 12px 18px;
+    width: fit-content;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-weight: bold;
+    box-shadow: none;
+}
+
+.history-card {
+    padding: 18px;
+    border-radius: 16px;
+    margin-top: 15px;
+    border-left: 4px solid #ffffff;
+    animation: fadeUp 0.5s ease;
+}
+
+.user-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.user-bar span {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.user-bar button {
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.mini-profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    margin-bottom: 22px;
+    border-radius: 18px;
+}
+
+.mini-profile p {
+    color: #d4d4d4;
+    font-size: 14px;
+}
+
+.mini-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.mini-stats span {
+    background: rgba(255, 255, 255, 0.10);
+    padding: 9px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.stats {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+#scoreChart {
+    max-height: 320px;
+}
+
+/* Light Mode */
+body.light-mode {
+    background: #ffffff;
+    color: #000000;
+}
+
+body.light-mode .card,
+body.light-mode .auth-card,
+body.light-mode .mini-profile,
+body.light-mode .history-card {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #dddddd;
+}
+
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode p,
+body.light-mode span,
+body.light-mode pre,
+body.light-mode #questionText {
+    color: #000000;
+}
+
+body.light-mode input,
+body.light-mode select,
+body.light-mode textarea {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #d4d4d4;
+}
+
+body.light-mode input::placeholder,
+body.light-mode textarea::placeholder {
+    color: #555555;
+}
+
+body.light-mode button {
+    background: #000000;
+    color: #ffffff;
+    border: 1px solid #000000;
+}
+
+body.light-mode button:hover {
+    background: #ffffff;
+    color: #000000;
+}
+
+body.light-mode #feedbackText {
+    background: #f7f7f7;
+    color: #000000;
+    border-left: 5px solid #000000;
+}
+
+body.light-mode .timer-box,
+body.light-mode .mini-stats span {
+    background: #f5f5f5;
+    color: #000000;
+    border: 1px solid #dddddd;
+}
+
+body.light-mode .history-card {
+    border-left: 4px solid #000000;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    body {
+        padding: 16px;
+    }
+
+    .app {
+        max-width: 100%;
+    }
+
+    header h1 {
+        font-size: 34px;
+    }
+
+    .card,
+    .auth-card {
+        padding: 20px;
+        border-radius: 18px;
+    }
+
+    .auth-card {
+        margin: 40px auto;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .user-bar {
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .timer-box {
+        width: 100%;
+        text-align: center;
+    }
+
+    .mini-profile {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
