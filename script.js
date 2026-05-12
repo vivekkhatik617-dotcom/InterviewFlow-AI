@@ -418,6 +418,7 @@ function showLoggedInUser() {
 
     const userName =
         document.getElementById("userName");
+        document.getElementById("heroUser").textContent = user.name;
 
     if (user && userName) {
         userName.textContent = `Welcome, ${user.name}`;
