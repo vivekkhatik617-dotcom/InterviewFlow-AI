@@ -42,7 +42,7 @@ async function getQuestion() {
 
     try {
 
-        const response = await fetch("/question", {
+        const response = await fetch("https://interviewflow-ai-t2yn.onrender.com/question", {
 
             method: "POST",
 
@@ -149,7 +149,7 @@ async function getFeedback() {
 
     try {
 
-        const response = await fetch("/feedback", {
+        const response = await fetch("https://interviewflow-ai-t2yn.onrender.com/feedback", {
 
             method: "POST",
 
