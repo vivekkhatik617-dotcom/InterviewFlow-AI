@@ -28,25 +28,36 @@
                     <p>Practice interviews with AI and improve your answers.</p>
                 </div>
 
-                <button onclick="toggleTheme()" id="themeBtn">
-                    🌗 Theme
-                </button>
+                <button onclick="toggleTheme()" id="themeBtn">🌗 Theme</button>
 
-                <button onclick="logoutUser()">
-                    Logout
-                </button>
+                <button onclick="logoutUser()">Logout</button>
 
             </div>
         </header>
 
-
         <div class="dashboard-layout">
-
-            <!-- LEFT SIDEBAR -->
 
             <div class="left-sidebar">
 
                 <section class="mini-profile">
+
+                    <div class="profile-top">
+
+                        <div class="profile-avatar">
+                            VK
+                        </div>
+
+                        <h2 id="profileName">Vivek</h2>
+
+                        <p class="profile-role">
+                            AI Interview Candidate
+                        </p>
+
+                        <span class="online-badge">
+                            ● Online
+                        </span>
+
+                    </div>
 
                     <div>
                         <h3>👤 User Profile</h3>
@@ -64,14 +75,11 @@
 
             </div>
 
-
-            <!-- MAIN CONTENT -->
-
             <div class="main-content">
+
                 <section class="hero-card">
 
                     <div>
-
                         <h2>
                             Welcome Back,
                             <span id="heroUser">User</span> 👋
@@ -80,7 +88,6 @@
                         <p>
                             Let’s crack your dream job with AI-powered interviews.
                         </p>
-
                     </div>
 
                     <button onclick="getQuestion()">
@@ -88,21 +95,40 @@
                     </button>
 
                 </section>
+
                 <section class="card">
 
                     <h2>Select Interview Role</h2>
 
-                    <select id="role">
-                        <option value="Frontend Developer">Frontend Developer</option>
-                    </select>
+                    <div class="select-grid">
 
-                    <select id="category">
-                        <option value="Frontend">Frontend</option>
-                    </select>
+                        <select id="role">
+                            <option value="Frontend Developer">Frontend Developer</option>
+                            <option value="Backend Developer">Backend Developer</option>
+                            <option value="Java Developer">Java Developer</option>
+                            <option value="C++ Developer">C++ Developer</option>
+                            <option value="HR Interview">HR Interview</option>
+                        </select>
 
-                    <select id="difficulty">
-                        <option value="Easy">Easy</option>
-                    </select>
+                        <select id="category">
+                            <option value="Frontend">Frontend</option>
+                            <option value="Backend">Backend</option>
+                            <option value="React">React</option>
+                            <option value="Node.js">Node.js</option>
+                            <option value="Java">Java</option>
+                            <option value="Python">Python</option>
+                            <option value="DSA">DSA</option>
+                            <option value="HR Interview">HR Interview</option>
+                            <option value="System Design">System Design</option>
+                        </select>
+
+                        <select id="difficulty">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+
+                    </div>
 
                     <button onclick="getQuestion()">
                         Generate Question
@@ -114,7 +140,6 @@
                     </div>
 
                 </section>
-
 
                 <section class="card" id="questionBox">
 
@@ -129,7 +154,6 @@
                     </button>
 
                 </section>
-
 
                 <section class="card">
 
@@ -149,7 +173,6 @@
 
                 </section>
 
-
                 <section class="card">
 
                     <h2>AI Performance Report</h2>
@@ -164,7 +187,6 @@
 
                 </section>
 
-
                 <section class="card">
 
                     <h2>📊 Analytics Dashboard</h2>
@@ -172,7 +194,6 @@
                     <canvas id="scoreChart"></canvas>
 
                 </section>
-
 
                 <section class="card">
 
@@ -193,6 +214,10 @@
                     <div id="historyList"></div>
 
                 </section>
+
+                <button onclick="clearHistory()">
+                    🗑️ Clear History
+                </button>
 
             </div>
 
