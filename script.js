@@ -544,3 +544,76 @@ function loadUserProfile() {
 }
 
 loadUserProfile();
+
+function loadAnalyticsChart() {
+
+    const history =
+        JSON.parse(localStorage.getItem("history")) || [];
+
+    const chartCanvas =
+        document.getElementById("scoreChart");
+
+    if (!chartCanvas) return;
+
+    const labels =
+        history.map((_, index) => `Interview ${index + 1}`);
+
+    const scores =
+        history.map(item => item.score || 0);
+
+    new Chart(chartCanvas, {
+
+        type: "line",
+
+        data: {
+            labels: labels,
+
+            datasets: [{
+                label: "Interview Scores",
+
+                data: scores,
+
+                borderColor: "#38bdf8",
+
+                backgroundColor: "rgba(56,189,248,0.2)",
+
+                tension: 0.4,
+
+                fill: true
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "white"
+                    }
+                }
+            },
+
+            scales: {
+
+                x: {
+                    ticks: {
+                        color: "white"
+                    }
+                },
+
+                y: {
+                    ticks: {
+                        color: "white"
+                    },
+
+                    beginAtZero: true,
+                    max: 10
+                }
+            }
+        }
+    });
+}
+
+loadAnalyticsChart();
