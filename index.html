@@ -18,169 +18,187 @@
 
     <div class="app">
 
-    <header>
-        <div class="user-bar">
+        <header>
+            <div class="user-bar">
 
-            <span id="userName">Welcome User</span>
-
-            <div>
-                <h1>InterviewFlowAI</h1>
-                <p>Practice interviews with AI and improve your answers.</p>
-            </div>
-
-            <button onclick="toggleTheme()" id="themeBtn">
-                🌗 Theme
-            </button>
-
-            <button onclick="logoutUser()">
-                Logout
-            </button>
-
-        </div>
-    </header>
-
-
-    <div class="dashboard-layout">
-
-        <!-- LEFT SIDEBAR -->
-
-        <div class="left-sidebar">
-
-            <section class="mini-profile">
+                <span id="userName">Welcome User</span>
 
                 <div>
-                    <h3>👤 User Profile</h3>
-                    <p id="profileEmail">No Email</p>
+                    <h1>InterviewFlowAI</h1>
+                    <p>Practice interviews with AI and improve your answers.</p>
                 </div>
 
-                <div class="mini-stats">
-                    <span>📄 <b id="profileTotal">0</b></span>
-                    <span>⭐ <b id="profileAvg">0</b></span>
-                    <span>🏆 <b id="profileBest">0</b></span>
-                    <span>⏱️ <b id="profileTime">00:00</b></span>
-                </div>
-
-            </section>
-
-        </div>
-
-
-        <!-- MAIN CONTENT -->
-
-        <div class="main-content">
-
-            <section class="card">
-
-                <h2>Select Interview Role</h2>
-
-                <select id="role">
-                    <option value="Frontend Developer">Frontend Developer</option>
-                </select>
-
-                <select id="category">
-                    <option value="Frontend">Frontend</option>
-                </select>
-
-                <select id="difficulty">
-                    <option value="Easy">Easy</option>
-                </select>
-
-                <button onclick="getQuestion()">
-                    Generate Question
+                <button onclick="toggleTheme()" id="themeBtn">
+                    🌗 Theme
                 </button>
 
-                <div class="timer-box">
-                    ⏱️ Time Left:
-                    <span id="timer">02:00</span>
-                </div>
-
-            </section>
-
-
-            <section class="card" id="questionBox">
-
-                <h2>Interview Question</h2>
-
-                <p id="questionText">
-                    Your question will appear here...
-                </p>
-
-                <button onclick="speakQuestion()">
-                    🔊 Speak Question
+                <button onclick="logoutUser()">
+                    Logout
                 </button>
 
-            </section>
+            </div>
+        </header>
 
 
-            <section class="card">
+        <div class="dashboard-layout">
 
-                <h2>Your Answer</h2>
+            <!-- LEFT SIDEBAR -->
 
-                <textarea id="answer"
-                    placeholder="Type your answer here..."></textarea>
+            <div class="left-sidebar">
 
-                <button onclick="startVoiceInput()">
-                    🎤 Start Voice Answer
-                </button>
+                <section class="mini-profile">
 
-                <button onclick="getFeedback()">
-                    Get Feedback
-                </button>
+                    <div>
+                        <h3>👤 User Profile</h3>
+                        <p id="profileEmail">No Email</p>
+                    </div>
 
-                <div id="feedbackText"></div>
+                    <div class="mini-stats">
+                        <span>📄 <b id="profileTotal">0</b></span>
+                        <span>⭐ <b id="profileAvg">0</b></span>
+                        <span>🏆 <b id="profileBest">0</b></span>
+                        <span>⏱️ <b id="profileTime">00:00</b></span>
+                    </div>
 
-            </section>
+                </section>
 
-
-            <section class="card">
-
-                <h2>AI Performance Report</h2>
-
-                <div id="performanceReport">
-                    Your AI report will appear here...
-                </div>
-
-                <button onclick="downloadReportPDF()">
-                    📄 Download Report PDF
-                </button>
-
-            </section>
+            </div>
 
 
-            <section class="card">
+            <!-- MAIN CONTENT -->
 
-                <h2>📊 Analytics Dashboard</h2>
+            <div class="main-content">
+                <section class="hero-card">
 
-                <canvas id="scoreChart"></canvas>
+                    <div>
 
-            </section>
+                        <h2>
+                            Welcome Back,
+                            <span id="heroUser">User</span> 👋
+                        </h2>
+
+                        <p>
+                            Let’s crack your dream job with AI-powered interviews.
+                        </p>
+
+                    </div>
+
+                    <button onclick="getQuestion()">
+                        🚀 Start Interview
+                    </button>
+
+                </section>
+                <section class="card">
+
+                    <h2>Select Interview Role</h2>
+
+                    <select id="role">
+                        <option value="Frontend Developer">Frontend Developer</option>
+                    </select>
+
+                    <select id="category">
+                        <option value="Frontend">Frontend</option>
+                    </select>
+
+                    <select id="difficulty">
+                        <option value="Easy">Easy</option>
+                    </select>
+
+                    <button onclick="getQuestion()">
+                        Generate Question
+                    </button>
+
+                    <div class="timer-box">
+                        ⏱️ Time Left:
+                        <span id="timer">02:00</span>
+                    </div>
+
+                </section>
 
 
-            <section class="card">
+                <section class="card" id="questionBox">
 
-                <h2>Interview History</h2>
+                    <h2>Interview Question</h2>
 
-                <div class="stats">
-                    <p>
-                        ⭐ Average Score:
-                        <span id="avgScore">0</span>
+                    <p id="questionText">
+                        Your question will appear here...
                     </p>
 
-                    <p>
-                        🏆 Best Score:
-                        <span id="bestScore">0</span>
-                    </p>
-                </div>
+                    <button onclick="speakQuestion()">
+                        🔊 Speak Question
+                    </button>
 
-                <div id="historyList"></div>
+                </section>
 
-            </section>
+
+                <section class="card">
+
+                    <h2>Your Answer</h2>
+
+                    <textarea id="answer" placeholder="Type your answer here..."></textarea>
+
+                    <button onclick="startVoiceInput()">
+                        🎤 Start Voice Answer
+                    </button>
+
+                    <button onclick="getFeedback()">
+                        Get Feedback
+                    </button>
+
+                    <div id="feedbackText"></div>
+
+                </section>
+
+
+                <section class="card">
+
+                    <h2>AI Performance Report</h2>
+
+                    <div id="performanceReport">
+                        Your AI report will appear here...
+                    </div>
+
+                    <button onclick="downloadReportPDF()">
+                        📄 Download Report PDF
+                    </button>
+
+                </section>
+
+
+                <section class="card">
+
+                    <h2>📊 Analytics Dashboard</h2>
+
+                    <canvas id="scoreChart"></canvas>
+
+                </section>
+
+
+                <section class="card">
+
+                    <h2>Interview History</h2>
+
+                    <div class="stats">
+                        <p>
+                            ⭐ Average Score:
+                            <span id="avgScore">0</span>
+                        </p>
+
+                        <p>
+                            🏆 Best Score:
+                            <span id="bestScore">0</span>
+                        </p>
+                    </div>
+
+                    <div id="historyList"></div>
+
+                </section>
+
+            </div>
 
         </div>
 
     </div>
-
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
