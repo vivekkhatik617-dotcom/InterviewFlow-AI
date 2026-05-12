@@ -7,14 +7,38 @@
 
 body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #050816, #0f172a, #111827);
+    background: radial-gradient(circle at top, #1e3a8a, #050816 45%, #020617);
     color: white;
     padding: 30px;
+    animation: bgMove 8s ease infinite alternate;
+}
+
+@keyframes bgMove {
+    from {
+        background-position: left top;
+    }
+
+    to {
+        background-position: right bottom;
+    }
 }
 
 .app {
     max-width: 900px;
     margin: auto;
+    animation: fadeUp 0.8s ease;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 header {
@@ -23,7 +47,7 @@ header {
 }
 
 header h1 {
-    font-size: 42px;
+    font-size: 46px;
     color: #38bdf8;
     text-shadow: 0 0 25px #38bdf8;
 }
@@ -42,6 +66,14 @@ header p {
     box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(14px);
+    animation: fadeUp 0.7s ease;
+    transition: 0.3s;
+}
+
+.card:hover,
+.auth-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 35px rgba(56, 189, 248, 0.28);
 }
 
 .auth-card {
@@ -66,19 +98,34 @@ input {
     width: 100%;
     padding: 15px;
     border-radius: 14px;
-    border: none;
+    border: 1px solid transparent;
     outline: none;
     margin-bottom: 15px;
     font-size: 16px;
+    transition: 0.3s;
 }
 
-input {
+input,
+select,
+textarea {
     background: rgba(255, 255, 255, 0.12);
     color: white;
 }
 
-input::placeholder {
+select option {
+    color: #020617;
+}
+
+input::placeholder,
+textarea::placeholder {
     color: #cbd5e1;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
 }
 
 textarea {
@@ -100,7 +147,11 @@ button {
 
 button:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 20px #38bdf8;
+    box-shadow: 0 0 22px #38bdf8;
+}
+
+button:active {
+    transform: scale(0.96);
 }
 
 .auth-card button {
@@ -175,6 +226,7 @@ pre {
     border-radius: 16px;
     margin-top: 15px;
     border-left: 4px solid #38bdf8;
+    animation: fadeUp 0.5s ease;
 }
 
 .user-bar {
@@ -196,4 +248,39 @@ pre {
     padding: 10px 18px;
     border-radius: 10px;
     font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 16px;
+    }
+
+    header h1 {
+        font-size: 34px;
+    }
+
+    .card,
+    .auth-card {
+        padding: 20px;
+        border-radius: 18px;
+    }
+
+    .auth-card {
+        margin: 40px auto;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .user-bar {
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .timer-box {
+        width: 100%;
+        text-align: center;
+    }
 }
