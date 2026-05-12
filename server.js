@@ -19,11 +19,9 @@ app.get("/", (req, res) => {
 });
 
 app.post("/question", async (req, res) => {
+    const { role = "Developer", difficulty = "Medium" } = req.body || {};
 
     try {
-
-        const { role, difficulty } = req.body;
-
         const prompt = `
 Generate ONLY ONE interview question.
 
@@ -37,44 +35,32 @@ Rules:
 - No markdown
 - Just the question
 
-Role: ${role || "Developer"}
-Difficulty: ${difficulty || "Medium"}
+Role: ${role}
+Difficulty: ${difficulty}
 `;
+
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
         });
 
-        const text =
-            response.text ||
-            "Tell me about yourself.";
-
         res.json({
-            question: text,
+            question: response.text || "Tell me about yourself."
         });
 
     } catch (error) {
-
         console.log("QUESTION ERROR:", error.message || error);
 
         const fallbackQuestions = [
-
-            `For a ${role || "Frontend"} developer, explain the difference between synchronous and asynchronous JavaScript.`,
-
-            `Describe a technical decision where you had to balance performance and readability.`,
-
-            `How would you optimize a slow web application?`,
-
-            `Explain the difference between stack and heap memory.`,
-
-            `What is RAII in C++ and why is it important?`
-
+            `For a ${role} developer, explain the difference between synchronous and asynchronous JavaScript.`,
+            "Describe a technical decision where you had to balance performance and readability.",
+            "How would you optimize a slow web application?",
+            "Explain the difference between stack and heap memory.",
+            "What is RAII in C++ and why is it important?"
         ];
 
         const randomQuestion =
-            fallbackQuestions[
-            Math.floor(Math.random() * fallbackQuestions.length)
-            ];
+            fallbackQuestions[Math.floor(Math.random() * fallbackQuestions.length)];
 
         res.json({
             question: randomQuestion
