@@ -451,3 +451,76 @@ body.light-mode .history-card {
         grid-template-columns: 1fr;
     }
 }
+
+.app {
+    max-width: 1400px;
+    margin: auto;
+}
+
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.left-sidebar {
+    position: sticky;
+    top: 20px;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.card {
+    padding: 30px;
+    border-radius: 24px;
+}
+
+.user-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.user-bar h1 {
+    font-size: 58px;
+    font-weight: 800;
+    letter-spacing: -2px;
+}
+
+.user-bar p {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+.mini-profile {
+    padding: 24px;
+    border-radius: 24px;
+}
+
+.mini-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.mini-stats span {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+button {
+    min-width: 180px;
+}
+
+#scoreChart {
+    margin-top: 20px;
+}
