@@ -259,6 +259,7 @@ function saveInterview(question, answer, feedback, timeTaken) {
 
     loadHistory();
     generatePerformanceReport();
+    loadUserProfile();
 }
 
 function loadHistory() {
