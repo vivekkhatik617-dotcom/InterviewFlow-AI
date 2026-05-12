@@ -505,3 +505,41 @@ function downloadReportPDF() {
 
     doc.save("InterviewFlow-AI-Report.pdf");
 }
+
+function loadUserProfile() {
+    const user =
+        JSON.parse(localStorage.getItem("InterviewFlowUser")) || {};
+
+    const history =
+        JSON.parse(localStorage.getItem("history")) || [];
+
+    const profileName = document.getElementById("profileName");
+    const profileEmail = document.getElementById("profileEmail");
+    const profileTotal = document.getElementById("profileTotal");
+    const profileAvg = document.getElementById("profileAvg");
+    const profileBest = document.getElementById("profileBest");
+    const profileTime = document.getElementById("profileTime");
+
+    if (!profileName) return;
+
+    profileName.textContent = user.name || "User";
+    profileEmail.textContent = user.email || "Not available";
+
+    let totalScore = 0;
+    let bestScore = 0;
+    let totalTime = 0;
+
+    history.forEach((item) => {
+        totalScore += item.score || 0;
+        bestScore = Math.max(bestScore, item.score || 0);
+        totalTime += item.timeTaken || 0;
+    });
+
+    profileTotal.textContent = history.length;
+    profileAvg.textContent =
+        history.length ? (totalScore / history.length).toFixed(1) : "0";
+    profileBest.textContent = bestScore;
+    profileTime.textContent = formatTime(totalTime);
+}
+
+loadUserProfile();
