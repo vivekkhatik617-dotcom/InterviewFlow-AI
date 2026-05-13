@@ -1,22 +1,33 @@
 require("dotenv").config();
-const mongoose = require("mongoose");
-
-const multer = require("multer");
-const pdfParse = require("pdf-parse");
-
-const upload = multer({ storage: multer.memoryStorage() });
 
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+const mongoose = require("mongoose");
+const multer = require("multer");
+const pdfParse = require("pdf-parse");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const { GoogleGenAI } = require("@google/genai");
 
 const app = express();
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
+
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log("MongoDB Connected 🚀"))
+    .catch((err) => console.log("MongoDB Error:", err.message));
+
+const UserSchema = new mongoose.Schema({
+    name: String,
+    email: { type: String, unique: true },
+    password: String
+});
+
+const User = mongoose.model("User", UserSchema);
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
@@ -24,6 +35,85 @@ const ai = new GoogleGenAI({
 
 app.get("/", (req, res) => {
     res.send("InterviewFlow AI Backend Running 🚀");
+});
+
+app.post("/api/register", async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = await User.create({
+            name,
+            email,
+            password: hashedPassword
+        });
+
+        res.json({
+            message: "Registration successful",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.log("REGISTER ERROR:", error.message);
+        res.status(500).json({ message: "Registration failed" });
+    }
+});
+
+app.post("/api/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email and password required" });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
+
+        const token = jwt.sign(
+            { id: user._id, email: user.email },
+            process.env.JWT_SECRET || "interviewflow_secret",
+            { expiresIn: "7d" }
+        );
+
+        res.json({
+            message: "Login successful",
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.log("LOGIN ERROR:", error.message);
+        res.status(500).json({ message: "Login failed" });
+    }
 });
 
 app.post("/question", async (req, res) => {
@@ -71,9 +161,7 @@ Category: ${category}
         const randomQuestion =
             fallbackQuestions[Math.floor(Math.random() * fallbackQuestions.length)];
 
-        res.json({
-            question: randomQuestion
-        });
+        res.json({ question: randomQuestion });
     }
 });
 
@@ -167,17 +255,8 @@ ${resumeText}
     }
 });
 
-
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log("MongoDB Connected 🚀");
-    })
-    .catch((err) => {
-        console.log(err);
-    });

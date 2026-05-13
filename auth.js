@@ -1,62 +1,70 @@
-function registerUser() {
+const API_URL = "http://localhost:3000";
 
-    const name =
-        document.getElementById("name").value;
+// REGISTER
+async function registerUser() {
+    const name = document.getElementById("registerName").value;
+    const email = document.getElementById("registerEmail").value;
+    const password = document.getElementById("registerPassword").value;
 
-    const email =
-        document.getElementById("email").value;
+    try {
+        const response = await fetch(`${API_URL}/api/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                email,
+                password,
+            }),
+        });
 
-    const password =
-        document.getElementById("password").value;
+        const data = await response.json();
 
-    if (!name || !email || !password) {
-        alert("Please fill all fields");
-        return;
+        alert(data.message);
+
+        if (response.ok) {
+            window.location.href = "login.html";
+        }
+
+    } catch (error) {
+        console.log(error);
+        alert("Registration Failed");
     }
-
-    const user = {
-        name,
-        email,
-        password
-    };
-
-    localStorage.setItem(
-        "hiremindUser",
-        JSON.stringify(user)
-    );
-
-    alert("Registration Successful 🚀");
-
-    window.location.href = "login.html";
 }
 
+// LOGIN
+async function loginUser() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
 
+    try {
+        const response = await fetch(`${API_URL}/api/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email,
+                password,
+            }),
+        });
 
-function loginUser() {
+        const data = await response.json();
 
-    const email =
-        document.getElementById("loginEmail").value;
+        if (response.ok) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
 
-    const password =
-        document.getElementById("loginPassword").value;
+            alert("Login Successful 🚀");
 
-    const savedUser =
-        JSON.parse(
-            localStorage.getItem("hiremindUser")
-        );
+            window.location.href = "index.html";
+        } else {
+            alert(data.message);
+        }
 
-    if (
-        !savedUser ||
-        email !== savedUser.email ||
-        password !== savedUser.password
-    ) {
-        alert("Invalid Email or Password");
-        return;
+    } catch (error) {
+        console.log(error);
+        alert("Login Failed");
     }
-
-    localStorage.setItem("isLoggedIn", "true");
-
-    alert("Login Successful 😎");
-
-    window.location.href = "index.html";
 }
