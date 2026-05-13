@@ -1,3 +1,6 @@
+require("dotenv").config();
+const mongoose = require("mongoose");
+
 const multer = require("multer");
 const pdfParse = require("pdf-parse");
 
@@ -24,7 +27,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/question", async (req, res) => {
-   const { role = "Developer", difficulty = "Medium", category = "General" } = req.body || {};
+    const { role = "Developer", difficulty = "Medium", category = "General" } = req.body || {};
 
     try {
         const prompt = `
@@ -122,15 +125,15 @@ I would first understand the problem, reproduce it, debug the root cause, and th
 });
 
 app.post("/analyze-resume", upload.single("resume"), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.json({ analysis: "No resume file uploaded." });
-    }
+    try {
+        if (!req.file) {
+            return res.json({ analysis: "No resume file uploaded." });
+        }
 
-    const pdfData = await pdfParse(req.file.buffer);
-    const resumeText = pdfData.text.slice(0, 6000);
+        const pdfData = await pdfParse(req.file.buffer);
+        const resumeText = pdfData.text.slice(0, 6000);
 
-    const prompt = `
+        const prompt = `
 Analyze this resume and give:
 
 1. Overall Resume Score out of 10
@@ -146,22 +149,22 @@ Resume:
 ${resumeText}
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+        });
 
-    res.json({
-      analysis: response.text,
-    });
+        res.json({
+            analysis: response.text,
+        });
 
-  } catch (error) {
-    console.log("RESUME ERROR:", error.message || error);
+    } catch (error) {
+        console.log("RESUME ERROR:", error.message || error);
 
-    res.json({
-      analysis: "Resume analysis failed. Try again later."
-    });
-  }
+        res.json({
+            analysis: "Resume analysis failed. Try again later."
+        });
+    }
 });
 
 
@@ -170,3 +173,11 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log("MongoDB Connected 🚀");
+    })
+    .catch((err) => {
+        console.log(err);
+    });
