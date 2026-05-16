@@ -1,8 +1,14 @@
+console.log("AUTH JS LOADED");
+
 const API_URL = "https://interviewflow-ai-t2yn.onrender.com";
 
 async function registerUser() {
-    
- 
+    const name = document.getElementById("registerName").value.trim();
+
+    const email = document.getElementById("registerEmail").value.trim();
+
+    const password = document.getElementById("registerPassword").value.trim();
+
     if (!name || !email || !password) {
         alert("All fields required");
         return;
@@ -49,7 +55,7 @@ async function loginUser() {
         });
 
         const data = await res.json();
- 
+
         if (!res.ok) {
             alert(data.message || "Login Failed");
             return;
