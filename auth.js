@@ -1,9 +1,7 @@
 const API_URL = "https://interviewflow-ai-t2yn.onrender.com";
 
 async function registerUser() {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    
  
     if (!name || !email || !password) {
         alert("All fields required");
