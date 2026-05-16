@@ -2,40 +2,90 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>InterviewFlow AI</title>
+
     <link rel="stylesheet" href="style.css" />
+
 </head>
 
 <body>
 
     <script>
-        if (localStorage.getItem("isLoggedIn") !== "true") {
+
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+
             window.location.href = "login.html";
+
         }
+
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            if (user) {
+
+                document.getElementById("userName").innerText =
+                    `Welcome ${user.name}`;
+
+                document.getElementById("heroUser").innerText =
+                    user.name;
+
+                document.getElementById("profileName").innerText =
+                    user.name;
+
+                document.getElementById("profileEmail").innerText =
+                    user.email;
+
+            }
+
+        });
+
     </script>
 
     <div class="app">
 
         <header>
+
             <div class="user-bar">
 
-                <span id="userName">Welcome User</span>
+                <span id="userName">
+                    Welcome User
+                </span>
 
                 <div>
-                    <h1>InterviewFlowAI</h1>
-                    <p>Practice interviews with AI and improve your answers.</p>
+
+                    <h1>
+                        InterviewFlow AI
+                    </h1>
+
+                    <p>
+                        Practice interviews with AI and improve your answers.
+                    </p>
+
                 </div>
 
-                <button onclick="toggleTheme()" id="themeBtn">🌗 Theme</button>
+                <button onclick="toggleTheme()" id="themeBtn">
+                    🌗 Theme
+                </button>
 
-                <button onclick="logoutUser()">Logout</button>
+                <button onclick="logoutUser()">
+                    Logout
+                </button>
 
             </div>
+
         </header>
 
         <div class="dashboard-layout">
+
+            <!-- LEFT SIDEBAR -->
 
             <div class="left-sidebar">
 
@@ -47,7 +97,9 @@
                             VK
                         </div>
 
-                        <h2 id="profileName">Vivek</h2>
+                        <h2 id="profileName">
+                            Vivek
+                        </h2>
 
                         <p class="profile-role">
                             AI Interview Candidate
@@ -59,36 +111,60 @@
 
                     </div>
 
-                    <div>
+                    <div class="profile-info">
                         <h3>👤 User Profile</h3>
                         <p id="profileEmail">No Email</p>
                     </div>
 
-                    <div class="mini-stats">      
-                  
-                        <span>📄 <b id="profileTotal">0</b></span>
-                        <span>⭐ <b id="profileAvg">0</b></span>
-                        <span>🏆 <b id="profileBest">0</b></span>
-                        <span>⏱️ <b id="profileTime">00:00</b></span>
+                    <div class="mini-stats">
+
+                        <span>
+                            📄 <b id="profileTotal">0</b>
+                        </span>
+
+                        <span>
+                            ⭐ <b id="profileAvg">0</b>
+                        </span>
+
+                        <span>
+                            🏆 <b id="profileBest">0</b>
+                        </span>
+
+                        <span>
+                            ⏱️ <b id="profileTime">00:00</b>
+                        </span>
+
                     </div>
 
                 </section>
 
             </div>
 
+            <!-- MAIN CONTENT -->
+
             <div class="main-content">
+
+                <!-- HERO -->
 
                 <section class="hero-card">
 
                     <div>
+
                         <h2>
+
                             Welcome Back,
-                            <span id="heroUser">User</span> 👋
+                            <span id="heroUser">
+                                User
+                            </span>
+
+                            👋
+
                         </h2>
 
                         <p>
                             Let’s crack your dream job with AI-powered interviews.
                         </p>
+
                     </div>
 
                     <button onclick="getQuestion()">
@@ -97,36 +173,94 @@
 
                 </section>
 
+                <!-- ROLE SELECT -->
+
                 <section class="card">
 
-                    <h2>Select Interview Role</h2>
+                    <h2>
+                        Select Interview Role
+                    </h2>
 
                     <div class="select-grid">
 
                         <select id="role">
-                            <option value="Frontend Developer">Frontend Developer</option>
-                            <option value="Backend Developer">Backend Developer</option>
-                            <option value="Java Developer">Java Developer</option>
-                            <option value="C++ Developer">C++ Developer</option>
-                            <option value="HR Interview">HR Interview</option>
+
+                            <option value="Frontend Developer">
+                                Frontend Developer
+                            </option>
+
+                            <option value="Backend Developer">
+                                Backend Developer
+                            </option>
+
+                            <option value="Java Developer">
+                                Java Developer
+                            </option>
+
+                            <option value="C++ Developer">
+                                C++ Developer
+                            </option>
+
+                            <option value="HR Interview">
+                                HR Interview
+                            </option>
+
                         </select>
 
                         <select id="category">
-                            <option value="Frontend">Frontend</option>
-                            <option value="Backend">Backend</option>
-                            <option value="React">React</option>
-                            <option value="Node.js">Node.js</option>
-                            <option value="Java">Java</option>
-                            <option value="Python">Python</option>
-                            <option value="DSA">DSA</option>
-                            <option value="HR Interview">HR Interview</option>
-                            <option value="System Design">System Design</option>
+
+                            <option value="Frontend">
+                                Frontend
+                            </option>
+
+                            <option value="Backend">
+                                Backend
+                            </option>
+
+                            <option value="React">
+                                React
+                            </option>
+
+                            <option value="Node.js">
+                                Node.js
+                            </option>
+
+                            <option value="Java">
+                                Java
+                            </option>
+
+                            <option value="Python">
+                                Python
+                            </option>
+
+                            <option value="DSA">
+                                DSA
+                            </option>
+
+                            <option value="HR Interview">
+                                HR Interview
+                            </option>
+
+                            <option value="System Design">
+                                System Design
+                            </option>
+
                         </select>
 
                         <select id="difficulty">
-                            <option value="Easy">Easy</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Hard">Hard</option>
+
+                            <option value="Easy">
+                                Easy
+                            </option>
+
+                            <option value="Medium">
+                                Medium
+                            </option>
+
+                            <option value="Hard">
+                                Hard
+                            </option>
+
                         </select>
 
                     </div>
@@ -136,19 +270,36 @@
                     </button>
 
                     <div class="timer-box">
+
+                        <div class="progress-wrapper">
+                            <div id="progressBar"></div>
+                        </div>
+
                         ⏱️ Time Left:
-                        <span id="timer">02:00</span>
+
+                        <span id="timer">
+                            02:00
+                        </span>
+
                     </div>
 
                 </section>
 
+                <!-- QUESTION -->
+
                 <section class="card" id="questionBox">
 
-                    <h2>Interview Question</h2>
+                    <h2>
+                        Interview Question
+                    </h2>
 
                     <p id="questionText">
                         Your question will appear here...
                     </p>
+                      <div class="interview-status">
+                   🤖 AI Interviewer is ready
+                    </div>
+
 
                     <button onclick="speakQuestion()">
                         🔊 Speak Question
@@ -156,9 +307,13 @@
 
                 </section>
 
+                <!-- ANSWER -->
+
                 <section class="card">
 
-                    <h2>Your Answer</h2>
+                    <h2>
+                        Your Answer
+                    </h2>
 
                     <textarea id="answer" placeholder="Type your answer here..."></textarea>
 
@@ -174,23 +329,33 @@
 
                 </section>
 
+                <!-- RESUME -->
+
                 <section class="card">
 
-                    <h2>AI Performance Report</h2>
+                    <h2>
+                        📄 Resume Upload & AI Analysis
+                    </h2>
 
-                    <section class="card">
-                        <h2>📄 Resume Upload & AI Analysis</h2>
+                    <input type="file" id="resumeFile" accept=".pdf" />
 
-                        <input type="file" id="resumeFile" accept=".pdf" />
+                    <button onclick="analyzeResume()">
+                        Analyze Resume
+                    </button>
 
-                        <button onclick="analyzeResume()">
-                            Analyze Resume
-                        </button>
+                    <div id="resumeResult">
+                        Resume analysis will appear here...
+                    </div>
 
-                        <div id="resumeResult">
-                            Resume analysis will appear here...
-                        </div>
-                    </section>
+                </section>
+
+                <!-- REPORT -->
+
+                <section class="card">
+
+                    <h2>
+                        AI Performance Report
+                    </h2>
 
                     <div id="performanceReport">
                         Your AI report will appear here...
@@ -202,19 +367,28 @@
 
                 </section>
 
+                <!-- ANALYTICS -->
+
                 <section class="card">
 
-                    <h2>📊 Analytics Dashboard</h2>
+                    <h2>
+                        📊 Analytics Dashboard
+                    </h2>
 
                     <canvas id="scoreChart"></canvas>
 
                 </section>
 
+                <!-- HISTORY -->
+
                 <section class="card">
 
-                    <h2>Interview History</h2>
+                    <h2>
+                        Interview History
+                    </h2>
 
                     <div class="stats">
+
                         <p>
                             ⭐ Average Score:
                             <span id="avgScore">0</span>
@@ -224,6 +398,7 @@
                             🏆 Best Score:
                             <span id="bestScore">0</span>
                         </p>
+
                     </div>
 
                     <div id="historyList"></div>
@@ -241,7 +416,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <script src="script.js"></script>
 
 </body>

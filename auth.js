@@ -1,4 +1,4 @@
-const API_URL = "https://interviewflow-ai-t2yn.onrender.com";
+const API_URL = "http://localhost:3000";
 
 // REGISTER
 async function registerUser() {
@@ -55,6 +55,7 @@ async function loginUser() {
         if (response.ok) {
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
+            window.location.href = "index.html";
 
             alert("Login Successful 🚀");
 
