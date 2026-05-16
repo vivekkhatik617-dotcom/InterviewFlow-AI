@@ -1,71 +1,70 @@
 const API_URL = "http://localhost:3000";
 
-// REGISTER
 async function registerUser() {
-    const name = document.getElementById("registerName").value;
-    const email = document.getElementById("registerEmail").value;
-    const password = document.getElementById("registerPassword").value;
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!name || !email || !password) {
+        alert("All fields required");
+        return;
+    }
 
     try {
-        const response = await fetch(`${API_URL}/api/register`, {
+        const res = await fetch(`${API_URL}/api/register`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name,
-                email,
-                password,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password })
         });
 
-        const data = await response.json();
+        const data = await res.json();
 
-        alert(data.message);
-
-        if (response.ok) {
-            window.location.href = "login.html";
+        if (!res.ok) {
+            alert(data.message || "Registration Failed");
+            return;
         }
+
+        localStorage.setItem("user", JSON.stringify(data.user));
+        alert("Registration Successful ✅");
+        window.location.href = "login.html";
 
     } catch (error) {
         console.log(error);
-        alert("Registration Failed");
+        alert("Server error");
     }
 }
 
-// LOGIN
 async function loginUser() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+
+    if (!email || !password) {
+        alert("Email and password required");
+        return;
+    }
 
     try {
-        const response = await fetch(`${API_URL}/api/login`, {
+        const res = await fetch(`${API_URL}/api/login`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email,
-                password,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
         });
 
-        const data = await response.json();
+        const data = await res.json();
 
-        if (response.ok) {
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
-            window.location.href = "index.html";
-
-            alert("Login Successful 🚀");
-
-            window.location.href = "index.html";
-        } else {
-            alert(data.message);
+        if (!res.ok) {
+            alert(data.message || "Login Failed");
+            return;
         }
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        alert("Login Successful ✅");
+        window.location.href = "index.html";
 
     } catch (error) {
         console.log(error);
-        alert("Login Failed");
+        alert("Server error");
     }
 }
