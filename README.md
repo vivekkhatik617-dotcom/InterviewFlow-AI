@@ -1,3 +1,5 @@
+![InterviewFlow AI Banner](banner.png)
+
 # 🚀 InterviewFlow AI
 
 InterviewFlow AI is a full-stack AI-powered mock interview platform.
