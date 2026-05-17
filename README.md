@@ -47,9 +47,9 @@ https://interviewflow-ai-t2yn.onrender.com
 
 ---
 
-## 📷 Screenshots
+## 📸 Screenshots
 
-(Add screenshots here)
+![Dashboard](banner.png.jpeg)
 
 ---
 
