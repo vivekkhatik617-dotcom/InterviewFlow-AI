@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "https://interviewflow-ai-t2yn.onrender.com";
 
 let totalTime = 120;
 let currentQuestion = "";
