@@ -1088,3 +1088,10 @@ button:active {
 #eyeStatus {
     color: #22c55e;
 }
+
+#camera {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    margin-top: 15px;
+}

@@ -910,3 +910,8 @@ async function detectFace() {
 
     }, 2000);
 }
+
+async function startInterview() {
+    await startCamera();
+    await getQuestion();
+}
