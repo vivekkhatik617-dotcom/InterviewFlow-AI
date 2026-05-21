@@ -178,6 +178,26 @@ app.get("/api/interviews/:userId", async (req, res) => {
     }
 });
 
+app.delete("/api/interviews/:userId", async (req, res) => {
+    try {
+        await Interview.deleteMany({
+            userId: req.params.userId,
+        });
+
+        res.json({
+            success: true,
+            message: "History cleared successfully",
+        });
+    } catch (error) {
+        console.log("CLEAR HISTORY ERROR:", error.message);
+
+        res.status(500).json({
+            success: false,
+            message: "History clear failed",
+        });
+    }
+});
+
 app.post("/question", async (req, res) => {
     try {
         const { role, difficulty, category } = req.body;
@@ -215,22 +235,37 @@ app.post("/feedback", async (req, res) => {
     try {
         const { question, answer } = req.body;
 
+        if (!question || !answer) {
+            return res.status(400).json({
+                feedback: "Score: 0/10\n\nFeedback:\nQuestion ya answer missing hai.\n\nImproved Answer:\nPlease answer the question properly.",
+            });
+        }
+
         const prompt = `
+You are a strict technical interviewer.
+
 Question:
 ${question}
 
 Candidate Answer:
 ${answer}
 
-Give:
+Rules:
+- Be strict and honest.
+- If answer is nonsense, irrelevant, too short, or like "hello", "hi", "idk", score must be 0, 1, or 2 only.
+- Do not give high score for placeholder answers.
+- Judge technical correctness.
+- Keep response short and clear.
 
-Score: x/10
+Response format exactly:
+
+Score: X/10
 
 Feedback:
-2 short lines
+...
 
 Improved Answer:
-short improved answer
+...
 `;
 
         const response = await ai.models.generateContent({
@@ -238,47 +273,36 @@ short improved answer
             contents: prompt,
         });
 
-        res.json({ feedback: response.text });
+        res.json({
+            success: true,
+            feedback: response.text || "Score: 0/10\n\nFeedback:\nNo feedback generated.\n\nImproved Answer:\nTry again.",
+        });
     } catch (error) {
         console.log("FEEDBACK ERROR:", error.message);
-        res.json({
-            feedback: "Score: 7/10\n\nGood answer but add more technical details.",
+        res.status(500).json({
+            success: false,
+            feedback: "Score: 0/10\n\nFeedback:\nFeedback failed due to server error.\n\nImproved Answer:\nPlease try again.",
         });
     }
 });
 
-app.post("/analyze-resume", upload.single("resume"), async (req, res) => {
+app.delete("/api/interviews/:userId", async (req, res) => {
     try {
-        if (!req.file) {
-            return res.json({ analysis: "No resume uploaded." });
-        }
-
-        const pdfData = await pdfParse(req.file.buffer);
-        const resumeText = pdfData.text.slice(0, 5000);
-
-        const prompt = `
-Analyze this resume.
-
-Give:
-1. Resume score
-2. Strengths
-3. Weaknesses
-4. Missing skills
-5. Best job roles
-
-Resume:
-${resumeText}
-`;
-
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: prompt,
+        await Interview.deleteMany({
+            userId: req.params.userId,
         });
 
-        res.json({ analysis: response.text });
+        res.json({
+            success: true,
+            message: "History cleared successfully",
+        });
     } catch (error) {
-        console.log("RESUME ERROR:", error.message);
-        res.json({ analysis: "Resume analysis failed." });
+        console.log("CLEAR HISTORY ERROR:", error.message);
+
+        res.status(500).json({
+            success: false,
+            message: "History clear failed",
+        });
     }
 });
 

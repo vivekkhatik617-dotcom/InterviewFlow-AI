@@ -1,4 +1,9 @@
-const API_URL = "https://interviewflow-ai-t2yn.onrender.com";
+const API_URL = "http://localhost:3000";
+
+let totalQuestions = 15;
+let currentQuestionIndex = 0;
+let totalScore = 0;
+let interviewStarted = false;
 
 let totalTime = 120;
 let currentQuestion = "";
@@ -6,54 +11,67 @@ let timeLeft = 120;
 let timerInterval;
 let timeTaken = 0;
 let scoreChartInstance = null;
+let autoNextTimer = null;
+
+function getSavedUser() {
+    return JSON.parse(localStorage.getItem("user"));
+}
 
 function typeText(element, text, speed = 10) {
     text = String(text || "");
     element.textContent = "";
 
     let i = 0;
-
     const timer = setInterval(() => {
+
         element.textContent += text.charAt(i);
         i++;
 
-        if (i >= text.length) {
-            clearInterval(timer);
-        }
+        if (i >= text.length) clearInterval(timer);
     }, speed);
 }
 
-function getSavedUser() {
-    return JSON.parse(localStorage.getItem("user"));
+function getAutoDifficulty() {
+    if (currentQuestionIndex < 5) return "Easy";
+    if (currentQuestionIndex < 10) return "Medium";
+    return "Hard";
+}
+
+function updateQuestionCounter() {
+    const counter = document.getElementById("questionCounter");
+    if (counter) {
+        counter.innerText = `Question ${currentQuestionIndex + 1} / ${totalQuestions}`;
+    }
 }
 
 async function getQuestion() {
     const role = document.getElementById("role").value;
-    const difficulty = document.getElementById("difficulty").value;
     const category = document.getElementById("category").value;
+    const difficultyEl = document.getElementById("difficulty");
     const questionText = document.getElementById("questionText");
+    const feedbackText = document.getElementById("feedbackText");
+    const answerBox = document.getElementById("answer");
+    const status = document.querySelector(".interview-status");
+
+    if (difficultyEl) difficultyEl.value = getAutoDifficulty();
+    if (feedbackText) feedbackText.innerHTML = "";
+    if (answerBox) answerBox.value = "";
+
+    updateQuestionCounter();
 
     questionText.innerHTML = `<div class="loader"></div>`;
 
-    const status =
-        document.querySelector(".interview-status");
-
-    if (status) {
-        status.innerHTML =
-            "🤖 AI is generating question...";
-    }
+    if (status) status.innerHTML = "🤖 AI is generating question...";
 
     startTimer();
 
     try {
         const response = await fetch(`${API_URL}/question`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 role,
-                difficulty,
+                difficulty: getAutoDifficulty(),
                 category,
             }),
         });
@@ -67,14 +85,10 @@ async function getQuestion() {
 
         currentQuestion = data.question;
         typeText(questionText, data.question);
-        if (status) {
-            status.innerHTML =
-                "🎤 AI asked a question";
-        }
 
+        if (status) status.innerHTML = "🎤 AI asked a question";
     } catch (error) {
-        questionText.innerText =
-            "Server issue hai. Thodi der baad try karo.";
+        questionText.innerText = "Server issue hai. Thodi der baad try karo.";
         console.log(error);
     }
 }
@@ -82,18 +96,15 @@ async function getQuestion() {
 function startTimer() {
     clearInterval(timerInterval);
 
-    const difficulty = document.getElementById("difficulty").value;
+    const difficulty = getAutoDifficulty();
 
-    if (difficulty === "Easy") {
-        totalTime = 120;
-    } else if (difficulty === "Medium") {
-        totalTime = 300;
-    } else {
-        totalTime = 480;
-    }
+    if (difficulty === "Easy") totalTime = 120;
+    else if (difficulty === "Medium") totalTime = 300;
+    else totalTime = 480;
 
     timeLeft = totalTime;
     timeTaken = 0;
+
     updateTimer();
 
     timerInterval = setInterval(() => {
@@ -110,27 +121,19 @@ function startTimer() {
 
 function updateTimer() {
     const timer = document.getElementById("timer");
-
-    if (!timer) return;
+    const progressBar = document.getElementById("progressBar");
 
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
 
-    timer.textContent = `${String(minutes).padStart(2, "0")}:${String(
-        seconds
-    ).padStart(2, "0")}`;
-}
+    if (timer) {
+        timer.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
 
-const progressBar =
-    document.getElementById("progressBar");
-
-if (progressBar) {
-
-    const progress =
-        (timeLeft / totalTime) * 100;
-
-    progressBar.style.width =
-        `${progress}%`;
+    if (progressBar) {
+        const progress = (timeLeft / totalTime) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
 }
 
 async function getFeedback() {
@@ -148,17 +151,16 @@ async function getFeedback() {
         return;
     }
 
+    clearTimeout(autoNextTimer);
     clearInterval(timerInterval);
-    timeTaken = totalTime - timeLeft;
 
+    timeTaken = totalTime - timeLeft;
     feedbackText.innerHTML = `<div class="loader"></div>`;
 
     try {
         const response = await fetch(`${API_URL}/feedback`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 question: currentQuestion,
                 answer,
@@ -168,7 +170,7 @@ async function getFeedback() {
         const data = await response.json();
 
         if (!response.ok || !data.feedback) {
-            feedbackText.innerText = "Feedback generate nahi hua.";
+            feedbackText.innerText = "Server Error. Feedback failed.";
             return;
         }
 
@@ -185,9 +187,62 @@ async function getFeedback() {
         await loadUserProfile();
         await generatePerformanceReport();
         await loadAnalyticsChart();
+
+        autoNextTimer = setTimeout(() => {
+            moveToNextQuestion();
+        }, 5000);
+
     } catch (error) {
-        feedbackText.innerText = "Feedback failed.";
+        feedbackText.innerText = "Server Error. Feedback failed.";
         console.log(error);
+    }
+}
+
+async function moveToNextQuestion() {
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex >= totalQuestions) {
+        finishInterview();
+        return;
+    }
+
+    await getQuestion();
+}
+
+async function nextQuestion() {
+    const answer = document.getElementById("answer").value;
+
+    if (answer.trim() === "") {
+        alert("Please answer first");
+        return;
+    }
+
+    await moveToNextQuestion();
+}
+
+function finishInterview() {
+    clearInterval(timerInterval);
+    clearTimeout(autoNextTimer);
+
+    const questionText = document.getElementById("questionText");
+    const answerBox = document.getElementById("answer");
+    const feedbackText = document.getElementById("feedbackText");
+
+    if (questionText) {
+        questionText.innerHTML = `
+            <h2>🎉 Interview Finished</h2>
+            <p>You completed ${totalQuestions} questions.</p>
+            <p>Check your final report below.</p>
+        `;
+    }
+
+    if (answerBox) answerBox.value = "";
+
+    if (feedbackText) {
+        feedbackText.innerHTML += `
+            <br><br>
+            ✅ Interview Completed Successfully!
+        `;
     }
 }
 
@@ -205,9 +260,7 @@ async function saveInterview(question, answer, feedback, timeTaken) {
     try {
         const response = await fetch(`${API_URL}/api/save-interview`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 userId: savedUser.id,
                 question,
@@ -219,7 +272,6 @@ async function saveInterview(question, answer, feedback, timeTaken) {
         });
 
         const data = await response.json();
-
         console.log("Interview Saved ✅", data);
     } catch (error) {
         console.log("SAVE ERROR:", error);
@@ -228,7 +280,6 @@ async function saveInterview(question, answer, feedback, timeTaken) {
 
 async function loadHistory() {
     const savedUser = getSavedUser();
-
     if (!savedUser) return;
 
     const historyList = document.getElementById("historyList");
@@ -238,10 +289,7 @@ async function loadHistory() {
     if (!historyList || !avgScore || !bestScore) return;
 
     try {
-        const response = await fetch(
-            `${API_URL}/api/interviews/${savedUser.id}`
-        );
-
+        const response = await fetch(`${API_URL}/api/interviews/${savedUser.id}`);
         const data = await response.json();
         const history = data.interviews || [];
 
@@ -249,11 +297,11 @@ async function loadHistory() {
 
         if (history.length === 0) {
             historyList.innerHTML = `
-    <div class="empty-state">
-        <h3>🚀 No Interviews Yet</h3>
-        <p>Start your first AI mock interview now.</p>
-    </div>
-`;
+                <div class="empty-state">
+                    <h3>🚀 No Interviews Yet</h3>
+                    <p>Start your first AI mock interview now.</p>
+                </div>
+            `;
             avgScore.textContent = "0";
             bestScore.textContent = "0";
             return;
@@ -264,54 +312,31 @@ async function loadHistory() {
 
         history.forEach((item) => {
             total += item.score || 0;
-
-            if ((item.score || 0) > best) {
-                best = item.score || 0;
-            }
+            best = Math.max(best, item.score || 0);
 
             historyList.innerHTML += `
                 <div class="history-card">
                     <h3>⭐ Score: ${item.score || 0}/10</h3>
 
-              <div class="history-date">
-                 ${new Date(item.createdAt).toLocaleString()}
-            </div>
-                    <p>
-                        ⏱️ Time Taken:
-                        ${formatTime(item.timeTaken || 0)}
-                    </p>
+                    <div class="history-date">
+                        ${new Date(item.createdAt).toLocaleString()}
+                    </div>
 
-                    <p>
-                        <b>Question:</b>
-                        ${(item.question || "").substring(0, 80)}...
-                    </p>
+                    <p>⏱️ Time Taken: ${formatTime(item.timeTaken || 0)}</p>
 
-                    <p>
-                        <b>Your Answer:</b>
-                        ${(item.answer || "").substring(0, 100)}...
-                    </p>
+                    <p><b>Question:</b> ${(item.question || "").substring(0, 80)}...</p>
 
+                    <p><b>Your Answer:</b> ${(item.answer || "").substring(0, 100)}...</p>
 
                     <button onclick='showDetails(
-    ${JSON.stringify(item.question || "")},
-    ${JSON.stringify(item.answer || "")},
-    ${JSON.stringify(item.feedback || "")}
-)'>
-    View Details
-</button>
-
+                        ${JSON.stringify(item.question || "")},
+                        ${JSON.stringify(item.answer || "")},
+                        ${JSON.stringify(item.feedback || "")}
+                    )'>
+                        View Details
+                    </button>
                 </div>
             `;
-        });
-
-        document.querySelectorAll(".details-btn").forEach((btn) => {
-            btn.addEventListener("click", () => {
-                showDetails(
-                    decodeURIComponent(btn.dataset.question),
-                    decodeURIComponent(btn.dataset.answer),
-                    decodeURIComponent(btn.dataset.feedback)
-                );
-            });
         });
 
         avgScore.textContent = (total / history.length).toFixed(1);
@@ -322,20 +347,65 @@ async function loadHistory() {
     }
 }
 
-async function generatePerformanceReport() {
+async function clearHistory() {
     const savedUser = getSavedUser();
 
+    if (!savedUser) {
+        alert("Please login first");
+        return;
+    }
+
+    const confirmDelete = confirm("Are you sure you want to clear history?");
+    if (!confirmDelete) return;
+
+    try {
+        const response = await fetch(`${API_URL}/api/interviews/${savedUser.id}`, {
+            method: "DELETE",
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert("History clear failed.");
+            return;
+        }
+
+        const historyList = document.getElementById("historyList");
+        const avgScore = document.getElementById("avgScore");
+        const bestScore = document.getElementById("bestScore");
+
+        if (historyList) {
+            historyList.innerHTML = `
+                <div class="empty-state">
+                    <h3>🚀 No Interviews Yet</h3>
+                    <p>Start your first AI mock interview now.</p>
+                </div>
+            `;
+        }
+
+        if (avgScore) avgScore.textContent = "0";
+        if (bestScore) bestScore.textContent = "0";
+
+        await loadUserProfile();
+        await generatePerformanceReport();
+        await loadAnalyticsChart();
+
+        alert("History Cleared Successfully ✅");
+    } catch (error) {
+        console.log("CLEAR HISTORY ERROR:", error);
+        alert("History clear failed.");
+    }
+}
+
+async function generatePerformanceReport() {
+    const savedUser = getSavedUser();
     if (!savedUser) return;
 
     const report = document.getElementById("performanceReport");
-
     if (!report) return;
 
     try {
-        const response = await fetch(
-            `${API_URL}/api/interviews/${savedUser.id}`
-        );
-
+        const response = await fetch(`${API_URL}/api/interviews/${savedUser.id}`);
         const data = await response.json();
         const history = data.interviews || [];
 
@@ -345,10 +415,7 @@ async function generatePerformanceReport() {
         }
 
         let total = 0;
-
-        history.forEach((item) => {
-            total += item.score || 0;
-        });
+        history.forEach((item) => total += item.score || 0);
 
         const avg = total / history.length;
 
@@ -386,10 +453,6 @@ async function generatePerformanceReport() {
     }
 }
 
-async function clearHistory() {
-    alert("Database history clear feature abhi add nahi hua.");
-}
-
 function showDetails(question, answer, feedback) {
     alert(
         `QUESTION:
@@ -413,7 +476,6 @@ ${feedback}`
 function formatTime(seconds) {
     const min = Math.floor(seconds / 60);
     const sec = seconds % 60;
-
     return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
 }
 
@@ -441,7 +503,6 @@ function logoutUser() {
 
 async function loadUserProfile() {
     const user = getSavedUser();
-
     if (!user) return;
 
     const profileName = document.getElementById("profileName");
@@ -455,31 +516,28 @@ async function loadUserProfile() {
     if (profileEmail) profileEmail.textContent = user.email || "Not available";
 
     try {
-        const response = await fetch(
-            `${API_URL}/api/interviews/${user.id}`
-        );
-
+        const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
         const data = await response.json();
         const history = data.interviews || [];
 
-        let totalScore = 0;
-        let bestScore = 0;
-        let totalTime = 0;
+        let totalScoreProfile = 0;
+        let bestScoreProfile = 0;
+        let totalTimeProfile = 0;
 
         history.forEach((item) => {
-            totalScore += item.score || 0;
-            bestScore = Math.max(bestScore, item.score || 0);
-            totalTime += item.timeTaken || 0;
+            totalScoreProfile += item.score || 0;
+            bestScoreProfile = Math.max(bestScoreProfile, item.score || 0);
+            totalTimeProfile += item.timeTaken || 0;
         });
 
         if (profileTotal) profileTotal.textContent = history.length;
         if (profileAvg) {
             profileAvg.textContent = history.length
-                ? (totalScore / history.length).toFixed(1)
+                ? (totalScoreProfile / history.length).toFixed(1)
                 : "0";
         }
-        if (profileBest) profileBest.textContent = bestScore;
-        if (profileTime) profileTime.textContent = formatTime(totalTime);
+        if (profileBest) profileBest.textContent = bestScoreProfile;
+        if (profileTime) profileTime.textContent = formatTime(totalTimeProfile);
     } catch (error) {
         console.log("PROFILE ERROR:", error);
     }
@@ -487,38 +545,23 @@ async function loadUserProfile() {
 
 async function loadAnalyticsChart() {
     const user = getSavedUser();
-
     if (!user) return;
 
     const chartCanvas = document.getElementById("scoreChart");
-
     if (!chartCanvas) return;
 
     try {
-        const response = await fetch(
-            `${API_URL}/api/interviews/${user.id}`
-        );
-
+        const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
         const data = await response.json();
         const history = data.interviews || [];
 
-        const labels = history
-            .slice()
-            .reverse()
-            .map((_, index) => `Interview ${index + 1}`);
+        const labels = history.slice().reverse().map((_, index) => `Interview ${index + 1}`);
+        const scores = history.slice().reverse().map((item) => item.score || 0);
 
-        const scores = history
-            .slice()
-            .reverse()
-            .map((item) => item.score || 0);
-
-        if (scoreChartInstance) {
-            scoreChartInstance.destroy();
-        }
+        if (scoreChartInstance) scoreChartInstance.destroy();
 
         scoreChartInstance = new Chart(chartCanvas, {
             type: "line",
-
             data: {
                 labels,
                 datasets: [
@@ -532,29 +575,19 @@ async function loadAnalyticsChart() {
                     },
                 ],
             },
-
             options: {
                 responsive: true,
-
                 plugins: {
                     legend: {
-                        labels: {
-                            color: "white",
-                        },
+                        labels: { color: "white" },
                     },
                 },
-
                 scales: {
                     x: {
-                        ticks: {
-                            color: "white",
-                        },
+                        ticks: { color: "white" },
                     },
-
                     y: {
-                        ticks: {
-                            color: "white",
-                        },
+                        ticks: { color: "white" },
                         beginAtZero: true,
                         max: 10,
                     },
@@ -568,15 +601,12 @@ async function loadAnalyticsChart() {
 
 function toggleTheme() {
     document.body.classList.toggle("light-mode");
-
     const isLight = document.body.classList.contains("light-mode");
-
     localStorage.setItem("theme", isLight ? "light" : "dark");
 }
 
 function loadTheme() {
     const theme = localStorage.getItem("theme");
-
     if (theme === "light") {
         document.body.classList.add("light-mode");
     }
@@ -603,7 +633,6 @@ async function analyzeResume() {
         });
 
         const data = await response.json();
-
         result.innerText = data.analysis;
     } catch (error) {
         result.innerText = "Resume analysis failed.";
@@ -620,7 +649,6 @@ function speakQuestion() {
     const speech = new SpeechSynthesisUtterance(currentQuestion);
     speech.lang = "en-US";
     speech.rate = 1;
-
     window.speechSynthesis.speak(speech);
 }
 
@@ -634,7 +662,6 @@ function startVoiceInput() {
     }
 
     const recognition = new SpeechRecognition();
-
     recognition.lang = "en-US";
 
     recognition.onstart = () => {
@@ -656,9 +683,7 @@ function startVoiceInput() {
 
 async function downloadReportPDF() {
     const { jsPDF } = window.jspdf;
-
     const doc = new jsPDF();
-
     const user = getSavedUser() || {};
 
     doc.setFont("helvetica");
@@ -669,10 +694,7 @@ async function downloadReportPDF() {
     doc.text(`User: ${user.name || "User"}`, 20, 35);
 
     try {
-        const response = await fetch(
-            `${API_URL}/api/interviews/${user.id}`
-        );
-
+        const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
         const data = await response.json();
         const history = data.interviews || [];
 
@@ -683,26 +705,19 @@ async function downloadReportPDF() {
         history.slice(0, 5).forEach((item, index) => {
             doc.setFontSize(14);
             doc.text(`Interview ${index + 1}`, 20, y);
-
             y += 10;
 
             doc.setFontSize(11);
             doc.text(`Score: ${item.score || 0}/10`, 20, y);
             y += 8;
 
-            doc.text(
-                `Time Taken: ${formatTime(item.timeTaken || 0)}`,
-                20,
-                y
-            );
-
+            doc.text(`Time Taken: ${formatTime(item.timeTaken || 0)}`, 20, y);
             y += 10;
 
             const question = doc.splitTextToSize(
                 `Question: ${item.question || ""}`,
                 160
             );
-
             doc.text(question, 20, y);
             y += question.length * 7;
 
@@ -710,7 +725,6 @@ async function downloadReportPDF() {
                 `Answer: ${item.answer || ""}`,
                 160
             );
-
             doc.text(answer, 20, y);
             y += answer.length * 7 + 12;
 
@@ -727,11 +741,16 @@ async function downloadReportPDF() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
     loadTheme();
     showLoggedInUser();
-    await loadHistory();
-    await generatePerformanceReport();
-    await loadUserProfile();
-    await loadAnalyticsChart();
+    loadHistory();
+    loadUserProfile();
+    generatePerformanceReport();
+    loadAnalyticsChart();
+    updateQuestionCounter();
 });
+
+function showFinalReport() {
+    alert("Final Report Coming Soon 🚀");
+}

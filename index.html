@@ -296,8 +296,8 @@
                     <p id="questionText">
                         Your question will appear here...
                     </p>
-                      <div class="interview-status">
-                   🤖 AI Interviewer is ready
+                    <div class="interview-status">
+                        🤖 AI Interviewer is ready
                     </div>
 
 
@@ -328,6 +328,10 @@
                     <div id="feedbackText"></div>
 
                 </section>
+
+                <button onclick="nextQuestion()">
+                    Next Question
+                </button>
 
                 <!-- RESUME -->
 
@@ -414,6 +418,12 @@
         </div>
 
     </div>
+
+    <button onclick="showFinalReport()">
+        📊 Generate Final Report
+    </button>
+
+    <div id="finalReport" class="final-report"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
