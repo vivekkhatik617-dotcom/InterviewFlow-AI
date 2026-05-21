@@ -178,26 +178,6 @@ app.get("/api/interviews/:userId", async (req, res) => {
     }
 });
 
-app.delete("/api/interviews/:userId", async (req, res) => {
-    try {
-        await Interview.deleteMany({
-            userId: req.params.userId,
-        });
-
-        res.json({
-            success: true,
-            message: "History cleared successfully",
-        });
-    } catch (error) {
-        console.log("CLEAR HISTORY ERROR:", error.message);
-
-        res.status(500).json({
-            success: false,
-            message: "History clear failed",
-        });
-    }
-});
-
 app.post("/question", async (req, res) => {
     try {
         const { role, difficulty, category } = req.body;
