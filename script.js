@@ -746,6 +746,92 @@ document.addEventListener("DOMContentLoaded", () => {
     updateQuestionCounter();
 });
 
-function showFinalReport() {
-    alert("Final Report Coming Soon 🚀");
+async function showFinalReport() {
+
+    const user = getSavedUser();
+
+    if (!user) {
+        alert("Please login first");
+        return;
+    }
+
+    const finalReport = document.getElementById("finalReport");
+
+    finalReport.innerHTML = `<div class="loader"></div>`;
+
+    try {
+
+        const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
+
+        const data = await response.json();
+
+        const history = data.interviews || [];
+
+        if (history.length === 0) {
+
+            finalReport.innerHTML = `
+                <h2>📊 Final Report</h2>
+                <p>No interview data found.</p>
+            `;
+
+            return;
+        }
+
+        let totalScore = 0;
+        let totalTime = 0;
+        let bestScore = 0;
+
+        history.forEach(item => {
+
+            totalScore += item.score || 0;
+
+            totalTime += item.timeTaken || 0;
+
+            bestScore = Math.max(bestScore, item.score || 0);
+
+        });
+
+        const avgScore =
+            (totalScore / history.length).toFixed(1);
+
+        let performance = "";
+
+        if (avgScore >= 8) {
+            performance = "Excellent 🚀";
+        }
+
+        else if (avgScore >= 5) {
+            performance = "Good 👍";
+        }
+
+        else {
+            performance = "Needs Improvement 📚";
+        }
+
+        finalReport.innerHTML = `
+            <h2>📊 Final Interview Report</h2>
+
+            <p>👤 User: <b>${user.name}</b></p>
+
+            <p>🧠 Total Interviews: <b>${history.length}</b></p>
+
+            <p>⭐ Average Score: <b>${avgScore}/10</b></p>
+
+            <p>🏆 Best Score: <b>${bestScore}/10</b></p>
+
+            <p>⏱️ Total Practice Time: <b>${formatTime(totalTime)}</b></p>
+
+            <p>🔥 Performance: <b>${performance}</b></p>
+        `;
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        finalReport.innerHTML = `
+            <p>Failed to generate report.</p>
+        `;
+    }
 }
