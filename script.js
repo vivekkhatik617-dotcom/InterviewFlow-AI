@@ -328,13 +328,10 @@ async function loadHistory() {
 
                     <p><b>Your Answer:</b> ${(item.answer || "").substring(0, 100)}...</p>
 
-                    <button onclick='showDetails(
-                        ${JSON.stringify(item.question || "")},
-                        ${JSON.stringify(item.answer || "")},
-                        ${JSON.stringify(item.feedback || "")}
-                    )'>
-                        View Details
-                    </button>
+                    <button onclick='showDetails(${JSON.stringify(item.question)}, ${JSON.stringify(item.answer)}, ${JSON.stringify(item.feedback)})'>
+    View Details
+</button>
+                  
                 </div>
             `;
         });
@@ -747,91 +744,43 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function showFinalReport() {
-
     const user = getSavedUser();
+    const finalReport = document.getElementById("finalReport");
 
     if (!user) {
         alert("Please login first");
         return;
     }
 
-    const finalReport = document.getElementById("finalReport");
-
     finalReport.innerHTML = `<div class="loader"></div>`;
 
-    try {
+    const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
+    const data = await response.json();
+    const history = data.interviews || [];
 
-        const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
-
-        const data = await response.json();
-
-        const history = data.interviews || [];
-
-        if (history.length === 0) {
-
-            finalReport.innerHTML = `
-                <h2>📊 Final Report</h2>
-                <p>No interview data found.</p>
-            `;
-
-            return;
-        }
-
-        let totalScore = 0;
-        let totalTime = 0;
-        let bestScore = 0;
-
-        history.forEach(item => {
-
-            totalScore += item.score || 0;
-
-            totalTime += item.timeTaken || 0;
-
-            bestScore = Math.max(bestScore, item.score || 0);
-
-        });
-
-        const avgScore =
-            (totalScore / history.length).toFixed(1);
-
-        let performance = "";
-
-        if (avgScore >= 8) {
-            performance = "Excellent 🚀";
-        }
-
-        else if (avgScore >= 5) {
-            performance = "Good 👍";
-        }
-
-        else {
-            performance = "Needs Improvement 📚";
-        }
-
-        finalReport.innerHTML = `
-            <h2>📊 Final Interview Report</h2>
-
-            <p>👤 User: <b>${user.name}</b></p>
-
-            <p>🧠 Total Interviews: <b>${history.length}</b></p>
-
-            <p>⭐ Average Score: <b>${avgScore}/10</b></p>
-
-            <p>🏆 Best Score: <b>${bestScore}/10</b></p>
-
-            <p>⏱️ Total Practice Time: <b>${formatTime(totalTime)}</b></p>
-
-            <p>🔥 Performance: <b>${performance}</b></p>
-        `;
-
+    if (history.length === 0) {
+        finalReport.innerHTML = `<h2>📊 Final Report</h2><p>No interview data found.</p>`;
+        return;
     }
 
-    catch (error) {
+    let total = 0;
+    let best = 0;
+    let totalTime = 0;
 
-        console.log(error);
+    history.forEach(item => {
+        total += item.score || 0;
+        best = Math.max(best, item.score || 0);
+        totalTime += item.timeTaken || 0;
+    });
 
-        finalReport.innerHTML = `
-            <p>Failed to generate report.</p>
-        `;
-    }
+    const avg = (total / history.length).toFixed(1);
+
+    finalReport.innerHTML = `
+        <h2>📊 Final Interview Report</h2>
+        <p>👤 User: <b>${user.name}</b></p>
+        <p>🧠 Total Interviews: <b>${history.length}</b></p>
+        <p>⭐ Average Score: <b>${avg}/10</b></p>
+        <p>🏆 Best Score: <b>${best}/10</b></p>
+        <p>⏱️ Total Time: <b>${formatTime(totalTime)}</b></p>
+    `;
 }
