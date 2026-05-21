@@ -702,44 +702,39 @@ async function downloadReportPDF() {
 
         let y = 60;
 
-        history.slice(0, 5).forEach((item, index) => {
-            doc.setFontSize(14);
-            doc.text(`Interview ${index + 1}`, 20, y);
-            y += 10;
-
-            doc.setFontSize(11);
-            doc.text(`Score: ${item.score || 0}/10`, 20, y);
-            y += 8;
-
-            doc.text(`Time Taken: ${formatTime(item.timeTaken || 0)}`, 20, y);
-            y += 10;
-
-            const question = doc.splitTextToSize(
-                `Question: ${item.question || ""}`,
-                160
-            );
-            doc.text(question, 20, y);
-            y += question.length * 7;
-
-            const answer = doc.splitTextToSize(
-                `Answer: ${item.answer || ""}`,
-                160
-            );
-            doc.text(answer, 20, y);
-            y += answer.length * 7 + 12;
+        history.forEach((item, index) => {
 
             if (y > 260) {
                 doc.addPage();
                 y = 20;
             }
+
+            doc.text(`Interview ${index + 1}`, 20, y);
+            y += 10;
+
+            doc.text(`Score: ${item.score || 0}/10`, 20, y);
+            y += 10;
+
+            doc.text(`Time: ${formatTime(item.timeTaken || 0)}`, 20, y);
+            y += 10;
+
+            doc.text(
+                `Question: ${(item.question || "").substring(0, 60)}`,
+                20,
+                y
+            );
+
+            y += 15;
         });
 
-        doc.save("InterviewFlow-AI-Report.pdf");
+        doc.save("InterviewFlow_Report.pdf");
+
     } catch (error) {
         console.log("PDF ERROR:", error);
-        alert("PDF download failed.");
+        alert("PDF generation failed");
     }
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     loadTheme();
