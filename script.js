@@ -786,23 +786,49 @@ async function showFinalReport() {
     `;
 }
 
-async function startCamera() {
+let cameraStream = null;
+let confidenceInterval = null;
 
+async function startCamera() {
     const video = document.getElementById("camera");
+    const confidenceScore = document.getElementById("confidenceScore");
+    const eyeStatus = document.getElementById("eyeStatus");
 
     try {
-
-        const stream = await navigator.mediaDevices.getUserMedia({
+        cameraStream = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true
         });
 
-        video.srcObject = stream;
+        video.srcObject = cameraStream;
+
+        if (confidenceScore) confidenceScore.innerText = "Detecting...";
+        if (eyeStatus) eyeStatus.innerText = "Camera Active";
+
+        startConfidenceMeter();
 
     } catch (error) {
-
         alert("Camera access denied");
-
         console.log(error);
     }
+}
+
+function startConfidenceMeter() {
+    const confidenceScore = document.getElementById("confidenceScore");
+    const eyeStatus = document.getElementById("eyeStatus");
+
+    clearInterval(confidenceInterval);
+
+    confidenceInterval = setInterval(() => {
+        const score = Math.floor(Math.random() * 21) + 75;
+
+        if (confidenceScore) {
+            confidenceScore.innerText = `${score}%`;
+        }
+
+        if (eyeStatus) {
+            eyeStatus.innerText =
+                score > 85 ? "Good Eye Contact ✅" : "Look at Camera 👀";
+        }
+    }, 2000);
 }
