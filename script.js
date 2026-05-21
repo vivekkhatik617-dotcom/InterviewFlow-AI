@@ -2,19 +2,24 @@ const API_URL = "https://interviewflow-ai-t2yn.onrender.com";
 
 let totalQuestions = 15;
 let currentQuestionIndex = 0;
-let totalScore = 0;
-let interviewStarted = false;
-
-let totalTime = 120;
 let currentQuestion = "";
+let totalTime = 120;
 let timeLeft = 120;
-let timerInterval;
 let timeTaken = 0;
-let scoreChartInstance = null;
+let timerInterval = null;
 let autoNextTimer = null;
+let scoreChartInstance = null;
+let cameraStream = null;
+let faceDetectionInterval = null;
 
 function getSavedUser() {
     return JSON.parse(localStorage.getItem("user"));
+}
+
+function formatTime(seconds) {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
 }
 
 function typeText(element, text, speed = 10) {
@@ -23,10 +28,8 @@ function typeText(element, text, speed = 10) {
 
     let i = 0;
     const timer = setInterval(() => {
-
         element.textContent += text.charAt(i);
         i++;
-
         if (i >= text.length) clearInterval(timer);
     }, speed);
 }
@@ -44,9 +47,14 @@ function updateQuestionCounter() {
     }
 }
 
+async function startInterview() {
+    await startCamera();
+    await getQuestion();
+}
+
 async function getQuestion() {
-    const role = document.getElementById("role").value;
-    const category = document.getElementById("category").value;
+    const role = document.getElementById("role")?.value || "Frontend Developer";
+    const category = document.getElementById("category")?.value || "Frontend";
     const difficultyEl = document.getElementById("difficulty");
     const questionText = document.getElementById("questionText");
     const feedbackText = document.getElementById("feedbackText");
@@ -56,11 +64,10 @@ async function getQuestion() {
     if (difficultyEl) difficultyEl.value = getAutoDifficulty();
     if (feedbackText) feedbackText.innerHTML = "";
     if (answerBox) answerBox.value = "";
+    if (!questionText) return;
 
     updateQuestionCounter();
-
     questionText.innerHTML = `<div class="loader"></div>`;
-
     if (status) status.innerHTML = "🤖 AI is generating question...";
 
     startTimer();
@@ -104,7 +111,6 @@ function startTimer() {
 
     timeLeft = totalTime;
     timeTaken = 0;
-
     updateTimer();
 
     timerInterval = setInterval(() => {
@@ -138,8 +144,8 @@ function updateTimer() {
 
 async function getFeedback() {
     const answerBox = document.getElementById("answer");
-    const answer = answerBox.value;
     const feedbackText = document.getElementById("feedbackText");
+    const answer = answerBox?.value || "";
 
     if (!currentQuestion) {
         alert("First generate a question.");
@@ -155,7 +161,8 @@ async function getFeedback() {
     clearInterval(timerInterval);
 
     timeTaken = totalTime - timeLeft;
-    feedbackText.innerHTML = `<div class="loader"></div>`;
+
+    if (feedbackText) feedbackText.innerHTML = `<div class="loader"></div>`;
 
     try {
         const response = await fetch(`${API_URL}/feedback`, {
@@ -170,30 +177,21 @@ async function getFeedback() {
         const data = await response.json();
 
         if (!response.ok || !data.feedback) {
-            feedbackText.innerText = "Server Error. Feedback failed.";
+            if (feedbackText) feedbackText.innerText = "Server Error. Feedback failed.";
             return;
         }
 
-        typeText(feedbackText, data.feedback);
+        if (feedbackText) typeText(feedbackText, data.feedback);
 
-        await saveInterview(
-            currentQuestion,
-            answer,
-            data.feedback,
-            timeTaken
-        );
+        await saveInterview(currentQuestion, answer, data.feedback, timeTaken);
 
         await loadHistory();
         await loadUserProfile();
         await generatePerformanceReport();
         await loadAnalyticsChart();
 
-        autoNextTimer = setTimeout(() => {
-            moveToNextQuestion();
-        }, 5000);
-
     } catch (error) {
-        feedbackText.innerText = "Server Error. Feedback failed.";
+        if (feedbackText) feedbackText.innerText = "Server Error. Feedback failed.";
         console.log(error);
     }
 }
@@ -210,13 +208,6 @@ async function moveToNextQuestion() {
 }
 
 async function nextQuestion() {
-    const answer = document.getElementById("answer").value;
-
-    if (answer.trim() === "") {
-        alert("Please answer first");
-        return;
-    }
-
     await moveToNextQuestion();
 }
 
@@ -317,21 +308,13 @@ async function loadHistory() {
             historyList.innerHTML += `
                 <div class="history-card">
                     <h3>⭐ Score: ${item.score || 0}/10</h3>
-
-                    <div class="history-date">
-                        ${new Date(item.createdAt).toLocaleString()}
-                    </div>
-
+                    <div class="history-date">${new Date(item.createdAt).toLocaleString()}</div>
                     <p>⏱️ Time Taken: ${formatTime(item.timeTaken || 0)}</p>
-
                     <p><b>Question:</b> ${(item.question || "").substring(0, 80)}...</p>
-
                     <p><b>Your Answer:</b> ${(item.answer || "").substring(0, 100)}...</p>
-
-                    <button onclick='showDetails(${JSON.stringify(item.question)}, ${JSON.stringify(item.answer)}, ${JSON.stringify(item.feedback)})'>
-    View Details
-</button>
-                  
+                    <button onclick='showDetails(${JSON.stringify(item.question || "")}, ${JSON.stringify(item.answer || "")}, ${JSON.stringify(item.feedback || "")})'>
+                        View Details
+                    </button>
                 </div>
             `;
         });
@@ -367,22 +350,7 @@ async function clearHistory() {
             return;
         }
 
-        const historyList = document.getElementById("historyList");
-        const avgScore = document.getElementById("avgScore");
-        const bestScore = document.getElementById("bestScore");
-
-        if (historyList) {
-            historyList.innerHTML = `
-                <div class="empty-state">
-                    <h3>🚀 No Interviews Yet</h3>
-                    <p>Start your first AI mock interview now.</p>
-                </div>
-            `;
-        }
-
-        if (avgScore) avgScore.textContent = "0";
-        if (bestScore) bestScore.textContent = "0";
-
+        await loadHistory();
         await loadUserProfile();
         await generatePerformanceReport();
         await loadAnalyticsChart();
@@ -468,12 +436,6 @@ FEEDBACK:
 
 ${feedback}`
     );
-}
-
-function formatTime(seconds) {
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
 }
 
 function showLoggedInUser() {
@@ -575,14 +537,10 @@ async function loadAnalyticsChart() {
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        labels: { color: "white" },
-                    },
+                    legend: { labels: { color: "white" } },
                 },
                 scales: {
-                    x: {
-                        ticks: { color: "white" },
-                    },
+                    x: { ticks: { color: "white" } },
                     y: {
                         ticks: { color: "white" },
                         beginAtZero: true,
@@ -700,38 +658,171 @@ async function downloadReportPDF() {
         let y = 60;
 
         history.forEach((item, index) => {
-
             if (y > 260) {
                 doc.addPage();
                 y = 20;
             }
 
+            doc.setFontSize(14);
             doc.text(`Interview ${index + 1}`, 20, y);
             y += 10;
 
+            doc.setFontSize(11);
             doc.text(`Score: ${item.score || 0}/10`, 20, y);
-            y += 10;
+            y += 8;
 
-            doc.text(`Time: ${formatTime(item.timeTaken || 0)}`, 20, y);
-            y += 10;
+            doc.text(`Time Taken: ${formatTime(item.timeTaken || 0)}`, 20, y);
+            y += 8;
 
-            doc.text(
-                `Question: ${(item.question || "").substring(0, 60)}`,
-                20,
-                y
-            );
+            const question = doc.splitTextToSize(`Question: ${item.question || ""}`, 170);
+            doc.text(question, 20, y);
+            y += question.length * 7;
 
-            y += 15;
+            const answer = doc.splitTextToSize(`Answer: ${item.answer || ""}`, 170);
+            doc.text(answer, 20, y);
+            y += answer.length * 7 + 10;
         });
 
-        doc.save("InterviewFlow_Report.pdf");
-
+        doc.save("InterviewFlow-AI-Report.pdf");
     } catch (error) {
         console.log("PDF ERROR:", error);
-        alert("PDF generation failed");
+        alert("PDF download failed.");
     }
 }
 
+async function startCamera() {
+    const video = document.getElementById("camera");
+    const confidenceScore = document.getElementById("confidenceScore");
+    const eyeStatus = document.getElementById("eyeStatus");
+
+    if (!video) return;
+
+    try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+        });
+
+        video.srcObject = cameraStream;
+
+        if (confidenceScore) confidenceScore.innerText = "Detecting...";
+        if (eyeStatus) eyeStatus.innerText = "Camera Active";
+
+        video.onloadedmetadata = () => {
+            video.play();
+            detectFaceReal();
+        };
+    } catch (error) {
+        alert("Camera access denied");
+        console.log(error);
+    }
+}
+
+async function detectFaceReal() {
+    const video = document.getElementById("camera");
+    const confidenceScore = document.getElementById("confidenceScore");
+    const eyeStatus = document.getElementById("eyeStatus");
+
+    if (!video || !window.faceapi) {
+        console.log("Face API not loaded");
+        return;
+    }
+
+    try {
+        await faceapi.nets.tinyFaceDetector.loadFromUri(
+            "https://justadudewhohacks.github.io/face-api.js/models"
+        );
+    } catch (error) {
+        console.log("Face model load error:", error);
+        return;
+    }
+
+    clearInterval(faceDetectionInterval);
+
+    faceDetectionInterval = setInterval(async () => {
+        const detections = await faceapi.detectAllFaces(
+            video,
+            new faceapi.TinyFaceDetectorOptions()
+        );
+
+        if (!detections || detections.length === 0) {
+            if (confidenceScore) confidenceScore.innerText = "20%";
+            if (eyeStatus) eyeStatus.innerText = "Face Not Visible ❌";
+            return;
+        }
+
+        if (detections.length > 1) {
+            if (confidenceScore) confidenceScore.innerText = "45%";
+            if (eyeStatus) eyeStatus.innerText = "Multiple Faces Detected ⚠️";
+            return;
+        }
+
+        const box = detections[0].box;
+        const centerX = box.x + box.width / 2;
+        const videoCenter = video.videoWidth / 2;
+        const difference = Math.abs(centerX - videoCenter);
+
+        if (difference < video.videoWidth * 0.18) {
+            if (confidenceScore) confidenceScore.innerText = "92%";
+            if (eyeStatus) eyeStatus.innerText = "Good Eye Contact ✅";
+        } else {
+            if (confidenceScore) confidenceScore.innerText = "65%";
+            if (eyeStatus) eyeStatus.innerText = "Look at Camera 👀";
+        }
+    }, 1500);
+}
+
+async function showFinalReport() {
+    const user = getSavedUser();
+    const finalReport = document.getElementById("finalReport");
+
+    if (!user) {
+        alert("Please login first");
+        return;
+    }
+
+    if (!finalReport) return;
+
+    finalReport.innerHTML = `<div class="loader"></div>`;
+
+    try {
+        const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
+        const data = await response.json();
+        const history = data.interviews || [];
+
+        if (history.length === 0) {
+            finalReport.innerHTML = `
+                <h2>📊 Final Report</h2>
+                <p>No interview data found.</p>
+            `;
+            return;
+        }
+
+        let total = 0;
+        let best = 0;
+        let totalTime = 0;
+
+        history.forEach((item) => {
+            total += item.score || 0;
+            best = Math.max(best, item.score || 0);
+            totalTime += item.timeTaken || 0;
+        });
+
+        const avg = (total / history.length).toFixed(1);
+
+        finalReport.innerHTML = `
+            <h2>📊 Final Interview Report</h2>
+            <p>👤 User: <b>${user.name}</b></p>
+            <p>🧠 Total Interviews: <b>${history.length}</b></p>
+            <p>⭐ Average Score: <b>${avg}/10</b></p>
+            <p>🏆 Best Score: <b>${best}/10</b></p>
+            <p>⏱️ Total Time: <b>${formatTime(totalTime)}</b></p>
+        `;
+    } catch (error) {
+        console.log("FINAL REPORT ERROR:", error);
+        finalReport.innerHTML = `<p>Failed to generate final report.</p>`;
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     loadTheme();
@@ -742,176 +833,3 @@ document.addEventListener("DOMContentLoaded", () => {
     loadAnalyticsChart();
     updateQuestionCounter();
 });
-
-async function showFinalReport() {
-    console.log("NEW FINAL REPORT WORKING");
-    const user = getSavedUser();
-    const finalReport = document.getElementById("finalReport");
-
-    if (!user) {
-        alert("Please login first");
-        return;
-    }
-
-    finalReport.innerHTML = `<div class="loader"></div>`;
-
-    const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
-    const data = await response.json();
-    const history = data.interviews || [];
-
-    if (history.length === 0) {
-        finalReport.innerHTML = `<h2>📊 Final Report</h2><p>No interview data found.</p>`;
-        return;
-    }
-
-    let total = 0;
-    let best = 0;
-    let totalTime = 0;
-
-    history.forEach(item => {
-        total += item.score || 0;
-        best = Math.max(best, item.score || 0);
-        totalTime += item.timeTaken || 0;
-    });
-
-    const avg = (total / history.length).toFixed(1);
-
-    finalReport.innerHTML = `
-        <h2>📊 Final Interview Report</h2>
-        <p>👤 User: <b>${user.name}</b></p>
-        <p>🧠 Total Interviews: <b>${history.length}</b></p>
-        <p>⭐ Average Score: <b>${avg}/10</b></p>
-        <p>🏆 Best Score: <b>${best}/10</b></p>
-        <p>⏱️ Total Time: <b>${formatTime(totalTime)}</b></p>
-    `;
-}
-
-let cameraStream = null;
-let confidenceInterval = null;
-
-async function startCamera() {
-
-    const video = document.getElementById("camera");
-
-    const confidenceScore =
-        document.getElementById("confidenceScore");
-
-    const eyeStatus =
-        document.getElementById("eyeStatus");
-
-    try {
-
-        const stream =
-            await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true
-            });
-
-        video.srcObject = stream;
-
-        if (confidenceScore) {
-            confidenceScore.innerText = "Detecting...";
-        }
-
-        if (eyeStatus) {
-            eyeStatus.innerText = "Camera Active";
-        }
-
-        startConfidenceMeter();
-
-        // IMPORTANT
-        video.addEventListener("play", () => {
-            detectFace();
-        });
-
-    }
-
-    catch (error) {
-
-        alert("Camera access denied");
-
-        console.log(error);
-    }
-}
-
-function startConfidenceMeter() {
-    const confidenceScore = document.getElementById("confidenceScore");
-    const eyeStatus = document.getElementById("eyeStatus");
-
-    clearInterval(confidenceInterval);
-
-    confidenceInterval = setInterval(() => {
-        const score = Math.floor(Math.random() * 21) + 75;
-
-        if (confidenceScore) {
-            confidenceScore.innerText = `${score}%`;
-        }
-
-        if (eyeStatus) {
-            eyeStatus.innerText =
-                score > 85 ? "Good Eye Contact ✅" : "Look at Camera 👀";
-        }
-    }, 2000);
-}
-
-async function loadFaceDetection() {
-
-    await faceapi.nets.tinyFaceDetector.loadFromUri(
-        "https://justadudewhohacks.github.io/face-api.js/models"
-    );
-
-    console.log("Face API Loaded ✅");
-}
-
-loadFaceDetection();
-
-async function detectFace() {
-
-    const video = document.getElementById("camera");
-
-    const confidenceScore =
-        document.getElementById("confidenceScore");
-
-    const eyeStatus =
-        document.getElementById("eyeStatus");
-
-    if (!video) return;
-
-    const faceInterval = setInterval(async () => {
-
-        const detections = await faceapi.detectAllFaces(
-            video,
-            new faceapi.TinyFaceDetectorOptions()
-        );
-
-        if (detections.length === 0) {
-
-            eyeStatus.innerText = "Face Not Visible ❌";
-            confidenceScore.innerText = "40%";
-
-        }
-
-        else if (detections.length > 1) {
-
-            eyeStatus.innerText = "Multiple Faces Detected ⚠️";
-            confidenceScore.innerText = "50%";
-
-        }
-
-        else {
-
-            eyeStatus.innerText = "Good Eye Contact ✅";
-
-            const score =
-                Math.floor(Math.random() * 10) + 90;
-
-            confidenceScore.innerText = `${score}%`;
-        }
-
-    }, 2000);
-}
-
-async function startInterview() {
-    await startCamera();
-    await getQuestion();
-}
