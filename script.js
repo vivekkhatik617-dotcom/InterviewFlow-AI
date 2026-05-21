@@ -790,27 +790,46 @@ let cameraStream = null;
 let confidenceInterval = null;
 
 async function startCamera() {
+
     const video = document.getElementById("camera");
-    const confidenceScore = document.getElementById("confidenceScore");
-    const eyeStatus = document.getElementById("eyeStatus");
+
+    const confidenceScore =
+        document.getElementById("confidenceScore");
+
+    const eyeStatus =
+        document.getElementById("eyeStatus");
 
     try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true
-        });
 
-        video.srcObject = cameraStream;
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
+            });
 
-        if (confidenceScore) confidenceScore.innerText = "Detecting...";
-        if (eyeStatus) eyeStatus.innerText = "Camera Active";
+        video.srcObject = stream;
+
+        if (confidenceScore) {
+            confidenceScore.innerText = "Detecting...";
+        }
+
+        if (eyeStatus) {
+            eyeStatus.innerText = "Camera Active";
+        }
 
         startConfidenceMeter();
 
-        detectFace();
+        // IMPORTANT
+        video.addEventListener("play", () => {
+            detectFace();
+        });
 
-    } catch (error) {
+    }
+
+    catch (error) {
+
         alert("Camera access denied");
+
         console.log(error);
     }
 }
@@ -858,7 +877,7 @@ async function detectFace() {
 
     if (!video) return;
 
-    setInterval(async () => {
+    const faceInterval = setInterval(async () => {
 
         const detections = await faceapi.detectAllFaces(
             video,
