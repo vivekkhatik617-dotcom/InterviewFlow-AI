@@ -744,6 +744,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function showFinalReport() {
+    console.log("NEW FINAL REPORT WORKING");
     const user = getSavedUser();
     const finalReport = document.getElementById("finalReport");
 
