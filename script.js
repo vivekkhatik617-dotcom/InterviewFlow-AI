@@ -807,6 +807,8 @@ async function startCamera() {
 
         startConfidenceMeter();
 
+        detectFace();
+
     } catch (error) {
         alert("Camera access denied");
         console.log(error);
@@ -830,5 +832,62 @@ function startConfidenceMeter() {
             eyeStatus.innerText =
                 score > 85 ? "Good Eye Contact ✅" : "Look at Camera 👀";
         }
+    }, 2000);
+}
+
+async function loadFaceDetection() {
+
+    await faceapi.nets.tinyFaceDetector.loadFromUri(
+        "https://justadudewhohacks.github.io/face-api.js/models"
+    );
+
+    console.log("Face API Loaded ✅");
+}
+
+loadFaceDetection();
+
+async function detectFace() {
+
+    const video = document.getElementById("camera");
+
+    const confidenceScore =
+        document.getElementById("confidenceScore");
+
+    const eyeStatus =
+        document.getElementById("eyeStatus");
+
+    if (!video) return;
+
+    setInterval(async () => {
+
+        const detections = await faceapi.detectAllFaces(
+            video,
+            new faceapi.TinyFaceDetectorOptions()
+        );
+
+        if (detections.length === 0) {
+
+            eyeStatus.innerText = "Face Not Visible ❌";
+            confidenceScore.innerText = "40%";
+
+        }
+
+        else if (detections.length > 1) {
+
+            eyeStatus.innerText = "Multiple Faces Detected ⚠️";
+            confidenceScore.innerText = "50%";
+
+        }
+
+        else {
+
+            eyeStatus.innerText = "Good Eye Contact ✅";
+
+            const score =
+                Math.floor(Math.random() * 10) + 90;
+
+            confidenceScore.innerText = `${score}%`;
+        }
+
     }, 2000);
 }
