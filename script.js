@@ -785,3 +785,24 @@ async function showFinalReport() {
         <p>⏱️ Total Time: <b>${formatTime(totalTime)}</b></p>
     `;
 }
+
+async function startCamera() {
+
+    const video = document.getElementById("camera");
+
+    try {
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true
+        });
+
+        video.srcObject = stream;
+
+    } catch (error) {
+
+        alert("Camera access denied");
+
+        console.log(error);
+    }
+}

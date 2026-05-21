@@ -1055,3 +1055,11 @@ button:active {
     background: linear-gradient(90deg, #00d4ff, #00ff99);
     transition: 0.4s;
 }
+
+#camera {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    margin-top: 20px;
+    border: 2px solid rgba(255,255,255,0.15);
+}
