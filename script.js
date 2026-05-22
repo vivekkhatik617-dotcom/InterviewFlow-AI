@@ -1,3 +1,5 @@
+let historyData = [];
+
 const API_URL = "https://interviewflow-ai-t2yn.onrender.com";
 
 let totalQuestions = 15;
@@ -283,6 +285,7 @@ async function loadHistory() {
         const response = await fetch(`${API_URL}/api/interviews/${savedUser.id}`);
         const data = await response.json();
         const history = data.interviews || [];
+        historyData = history;
 
         historyList.innerHTML = "";
 
@@ -312,8 +315,8 @@ async function loadHistory() {
                     <p>⏱️ Time Taken: ${formatTime(item.timeTaken || 0)}</p>
                     <p><b>Question:</b> ${(item.question || "").substring(0, 80)}...</p>
                     <p><b>Your Answer:</b> ${(item.answer || "").substring(0, 100)}...</p>
-                    <button onclick='showDetails(${JSON.stringify(item.question || "")}, ${JSON.stringify(item.answer || "")}, ${JSON.stringify(item.feedback || "")})'>
-                        View Details
+                    <button onclick="showHistoryDetails(${index})">
+                     View Details
                     </button>
                 </div>
             `;
@@ -435,6 +438,21 @@ ${answer}
 FEEDBACK:
 
 ${feedback}`
+    );
+}
+
+function showHistoryDetails(index) {
+    const item = historyData[index];
+
+    if (!item) {
+        alert("Details not found");
+        return;
+    }
+
+    showDetails(
+        item.question || "",
+        item.answer || "",
+        item.feedback || ""
     );
 }
 
@@ -730,7 +748,7 @@ async function detectFaceReal() {
 
     try {
         await faceapi.nets.tinyFaceDetector.loadFromUri(
-            "https://justadudewhohacks.github.io/face-api.js/models"
+            "https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/"
         );
     } catch (error) {
         console.log("Face model load error:", error);
