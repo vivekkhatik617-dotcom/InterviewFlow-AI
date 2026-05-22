@@ -728,7 +728,7 @@ async function startCamera() {
 
         video.onloadedmetadata = () => {
             video.play();
-            detectFaceReal();
+           detectFaceConfidence();
         };
     } catch (error) {
         alert("Camera access denied");
