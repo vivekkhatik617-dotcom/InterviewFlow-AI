@@ -304,7 +304,7 @@ async function loadHistory() {
         let total = 0;
         let best = 0;
 
-        history.forEach((item) => {
+        history.forEach((item, index) => {
             total += item.score || 0;
             best = Math.max(best, item.score || 0);
 
