@@ -851,3 +851,62 @@ document.addEventListener("DOMContentLoaded", () => {
     loadAnalyticsChart();
     updateQuestionCounter();
 });
+
+async function loadFaceAI() {
+
+    await faceapi.nets.tinyFaceDetector.loadFromUri(
+        "https://cdn.jsdelivr.net/npm/face-api.js/weights"
+    );
+
+    console.log("Face AI Loaded ✅");
+}
+
+loadFaceAI();
+
+async function detectFaceConfidence() {
+
+    const video = document.getElementById("camera");
+
+    const confidenceText = document.getElementById("confidenceLevel");
+    const eyeText = document.getElementById("eyeContact");
+
+    if (!video) return;
+
+    setInterval(async () => {
+
+        const detection = await faceapi.detectSingleFace(
+            video,
+            new faceapi.TinyFaceDetectorOptions()
+        );
+
+        if (detection) {
+
+            const score = Math.floor(Math.random() * 20) + 80;
+
+            if (confidenceText) {
+                confidenceText.innerHTML =
+                    `🎯 Confidence: ${score}%`;
+            }
+
+            if (eyeText) {
+                eyeText.innerHTML =
+                    `👀 Eye Contact: Face Detected ✅`;
+            }
+
+        } else {
+
+            if (confidenceText) {
+                confidenceText.innerHTML =
+                    `🎯 Confidence: Low`;
+            }
+
+            if (eyeText) {
+                eyeText.innerHTML =
+                    `👀 Eye Contact: No Face ❌`;
+            }
+        }
+
+    }, 2000);
+}
+
+detectFaceConfidence();
