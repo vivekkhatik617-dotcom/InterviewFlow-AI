@@ -1095,3 +1095,19 @@ button:active {
     border-radius: 20px;
     margin-top: 15px;
 }
+
+.recording-controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+#downloadVideo {
+    padding: 12px 18px;
+    border-radius: 12px;
+    background: white;
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+}

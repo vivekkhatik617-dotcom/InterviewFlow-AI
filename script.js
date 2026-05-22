@@ -728,7 +728,7 @@ async function startCamera() {
 
         video.onloadedmetadata = () => {
             video.play();
-           detectFaceConfidence();
+            detectFaceConfidence();
         };
     } catch (error) {
         alert("Camera access denied");
@@ -910,3 +910,65 @@ async function detectFaceConfidence() {
 }
 
 detectFaceConfidence();
+
+let mediaRecorder;
+let recordedChunks = [];
+
+function startRecording() {
+
+    const video = document.getElementById("camera");
+
+    if (!video || !video.srcObject) {
+
+        alert("Camera not started");
+        return;
+    }
+
+    recordedChunks = [];
+
+    mediaRecorder = new MediaRecorder(video.srcObject);
+
+    mediaRecorder.ondataavailable = (event) => {
+
+        if (event.data.size > 0) {
+
+            recordedChunks.push(event.data);
+        }
+    };
+
+    mediaRecorder.onstop = () => {
+
+        const blob =
+            new Blob(recordedChunks, {
+                type: "video/webm"
+            });
+
+        const url =
+            URL.createObjectURL(blob);
+
+        const downloadLink =
+            document.getElementById("downloadVideo");
+
+        downloadLink.href = url;
+
+        downloadLink.download =
+            "InterviewRecording.webm";
+
+        downloadLink.style.display =
+            "inline-block";
+    };
+
+    mediaRecorder.start();
+
+    alert("Recording Started 🔴");
+}
+
+function stopRecording() {
+
+    if (mediaRecorder) {
+
+        mediaRecorder.stop();
+
+        alert("Recording Stopped ✅");
+    }
+}
