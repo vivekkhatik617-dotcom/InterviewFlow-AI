@@ -726,10 +726,15 @@ async function startCamera() {
         if (confidenceScore) confidenceScore.innerText = "Detecting...";
         if (eyeStatus) eyeStatus.innerText = "Camera Active";
 
-        video.onloadedmetadata = () => {
-            video.play();
+        video.onloadedmetadata = async () => {
+
+            await video.play();
+
+            console.log("VIDEO STARTED ✅");
+
             detectFaceConfidence();
         };
+
     } catch (error) {
         alert("Camera access denied");
         console.log(error);
@@ -861,14 +866,17 @@ async function loadFaceAI() {
     console.log("Face AI Loaded ✅");
 }
 
-loadFaceAI();
+window.addEventListener("load", async () => {
+    await loadFaceAI();
+    console.log("FACE API READY 🚀");
+});
 
 async function detectFaceConfidence() {
 
     const video = document.getElementById("camera");
 
-    const confidenceText = document.getElementById("confidenceLevel");
-    const eyeText = document.getElementById("eyeContact");
+    const confidenceText = document.getElementById("confidenceScore");
+    const eyeText = document.getElementById("eyeStatus");
 
     if (!video) return;
 
