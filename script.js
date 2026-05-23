@@ -762,37 +762,58 @@ async function detectFaceReal() {
 
     clearInterval(faceDetectionInterval);
 
-    faceDetectionInterval = setInterval(async () => {
-        const detections = await faceapi.detectAllFaces(
-            video,
-            new faceapi.TinyFaceDetectorOptions()
-        );
+    if (detection) {
 
-        if (!detections || detections.length === 0) {
-            if (confidenceScore) confidenceScore.innerText = "20%";
-            if (eyeStatus) eyeStatus.innerText = "Face Not Visible ❌";
-            return;
-        }
+        confidenceText.innerHTML =
+            "🎯 Confidence: High ✅";
 
-        if (detections.length > 1) {
-            if (confidenceScore) confidenceScore.innerText = "45%";
-            if (eyeStatus) eyeStatus.innerText = "Multiple Faces Detected ⚠️";
-            return;
-        }
+        const leftEye = detection.landmarks.getLeftEye();
+        const rightEye = detection.landmarks.getRightEye();
 
-        const box = detections[0].box;
-        const centerX = box.x + box.width / 2;
-        const videoCenter = video.videoWidth / 2;
-        const difference = Math.abs(centerX - videoCenter);
+        if (leftEye && rightEye) {
 
-        if (difference < video.videoWidth * 0.18) {
-            if (confidenceScore) confidenceScore.innerText = "92%";
-            if (eyeStatus) eyeStatus.innerText = "Good Eye Contact ✅";
+            eyeText.innerHTML =
+                "👀 Eye Contact: Looking at Camera ✅";
+
         } else {
-            if (confidenceScore) confidenceScore.innerText = "65%";
-            if (eyeStatus) eyeStatus.innerText = "Look at Camera 👀";
+
+            eyeText.innerHTML =
+                "👀 Eye Contact: Weak ⚠️";
         }
-    }, 1500);
+
+    } else {
+
+        confidenceText.innerHTML =
+            "🎯 Confidence: Low ❌";
+
+        eyeText.innerHTML =
+            "👀 Eye Contact: No Face ❌";
+    }
+
+    if (!detections || detections.length === 0) {
+        if (confidenceScore) confidenceScore.innerText = "20%";
+        if (eyeStatus) eyeStatus.innerText = "Face Not Visible ❌";
+        return;
+    }
+
+    if (detections.length > 1) {
+        if (confidenceScore) confidenceScore.innerText = "45%";
+        if (eyeStatus) eyeStatus.innerText = "Multiple Faces Detected ⚠️";
+        return;
+    }
+
+    const box = detections[0].box;
+    const centerX = box.x + box.width / 2;
+    const videoCenter = video.videoWidth / 2;
+    const difference = Math.abs(centerX - videoCenter);
+
+    if (difference < video.videoWidth * 0.18) {
+        if (confidenceScore) confidenceScore.innerText = "92%";
+        if (eyeStatus) eyeStatus.innerText = "Good Eye Contact ✅";
+    } else {
+        if (confidenceScore) confidenceScore.innerText = "65%";
+        if (eyeStatus) eyeStatus.innerText = "Look at Camera 👀";
+    }
 }
 
 async function showFinalReport() {
@@ -857,7 +878,14 @@ document.addEventListener("DOMContentLoaded", () => {
     updateQuestionCounter();
 });
 
+async function loadFaceAI() {
 
+    await faceapi.nets.tinyFaceDetector.loadFromUri(
+        "https://justadudewhohacks.github.io/face-api.js/models"
+    );
+
+    console.log("Face AI Loaded ✅");
+}
 
 window.addEventListener("load", async () => {
     await loadFaceAI();
@@ -973,3 +1001,31 @@ function stopRecording() {
         alert("Recording Stopped ✅");
     }
 }
+
+let warningCount = 0;
+
+function addCheatingWarning(reason) {
+    warningCount++;
+
+    alert(`Warning ${warningCount}: ${reason}`);
+
+    console.log("CHEATING WARNING:", reason);
+}
+
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        addCheatingWarning("Tab switched during interview");
+    }
+});
+
+window.addEventListener("blur", () => {
+    addCheatingWarning("Window focus lost");
+});
+
+document.addEventListener("copy", () => {
+    addCheatingWarning("Copy action detected");
+});
+
+document.addEventListener("paste", () => {
+    addCheatingWarning("Paste action detected");
+});
