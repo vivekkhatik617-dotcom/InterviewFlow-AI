@@ -892,124 +892,93 @@ window.addEventListener("load", async () => {
     console.log("FACE API READY 🚀");
 });
 
+let faceInterval = null;
+let mediaRecorder;
+let recordedChunks = [];
+let warningCount = 0;
+
+function addCheatingWarning(reason) {
+    warningCount++;
+    alert(`Warning ${warningCount}: ${reason}`);
+    console.log("CHEATING WARNING:", reason);
+}
+
 async function detectFaceConfidence() {
-
     const video = document.getElementById("camera");
-
     const confidenceText = document.getElementById("confidenceScore");
     const eyeText = document.getElementById("eyeStatus");
 
-    if (!video) return;
+    if (!video || !confidenceText || !eyeText) return;
 
-    setInterval(async () => {
+    clearInterval(faceInterval);
 
-        const detection = await faceapi.detectSingleFace(
-            video,
-            new faceapi.TinyFaceDetectorOptions()
-        );
+    faceInterval = setInterval(async () => {
+        try {
+            const detections = await faceapi
+                .detectAllFaces(
+                    video,
+                    new faceapi.TinyFaceDetectorOptions()
+                )
+                .withFaceLandmarks();
 
-        if (detection) {
-
-            const score = Math.floor(Math.random() * 20) + 80;
-
-            if (confidenceText) {
-                confidenceText.innerHTML =
-                    `🎯 Confidence: ${score}%`;
+            if (detections.length === 1) {
+                confidenceText.innerHTML = "High ✅";
+                eyeText.innerHTML = "Looking at Camera ✅";
+            } else if (detections.length > 1) {
+                confidenceText.innerHTML = "Multiple Faces ⚠️";
+                eyeText.innerHTML = "Possible Cheating 🚫";
+                addCheatingWarning("Multiple people detected");
+            } else {
+                confidenceText.innerHTML = "Low ❌";
+                eyeText.innerHTML = "No Face Detected ❌";
             }
-
-            if (eyeText) {
-                eyeText.innerHTML =
-                    `👀 Eye Contact: Face Detected ✅`;
-            }
-
-        } else {
-
-            if (confidenceText) {
-                confidenceText.innerHTML =
-                    `🎯 Confidence: Low`;
-            }
-
-            if (eyeText) {
-                eyeText.innerHTML =
-                    `👀 Eye Contact: No Face ❌`;
-            }
+        } catch (error) {
+            console.log("FACE DETECTION ERROR:", error);
         }
-
     }, 2000);
 }
 
-detectFaceConfidence();
-
-let mediaRecorder;
-let recordedChunks = [];
-
 function startRecording() {
-
     const video = document.getElementById("camera");
 
     if (!video || !video.srcObject) {
-
         alert("Camera not started");
         return;
     }
 
     recordedChunks = [];
-
     mediaRecorder = new MediaRecorder(video.srcObject);
 
     mediaRecorder.ondataavailable = (event) => {
-
         if (event.data.size > 0) {
-
             recordedChunks.push(event.data);
         }
     };
 
     mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, {
+            type: "video/webm"
+        });
 
-        const blob =
-            new Blob(recordedChunks, {
-                type: "video/webm"
-            });
+        const url = URL.createObjectURL(blob);
+        const downloadLink = document.getElementById("downloadVideo");
 
-        const url =
-            URL.createObjectURL(blob);
-
-        const downloadLink =
-            document.getElementById("downloadVideo");
-
-        downloadLink.href = url;
-
-        downloadLink.download =
-            "InterviewRecording.webm";
-
-        downloadLink.style.display =
-            "inline-block";
+        if (downloadLink) {
+            downloadLink.href = url;
+            downloadLink.download = "InterviewRecording.webm";
+            downloadLink.style.display = "inline-block";
+        }
     };
 
     mediaRecorder.start();
-
     alert("Recording Started 🔴");
 }
 
 function stopRecording() {
-
-    if (mediaRecorder) {
-
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
         mediaRecorder.stop();
-
         alert("Recording Stopped ✅");
     }
-}
-
-let warningCount = 0;
-
-function addCheatingWarning(reason) {
-    warningCount++;
-
-    alert(`Warning ${warningCount}: ${reason}`);
-
-    console.log("CHEATING WARNING:", reason);
 }
 
 document.addEventListener("visibilitychange", () => {
