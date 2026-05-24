@@ -398,7 +398,7 @@ body.light-mode .history-card {
 
 .sidebar {
     width: 280px;
-    position: sticky;
+    position: relative;
     top: 20px;
 }
 
@@ -1183,4 +1183,11 @@ button:active {
     color: #7dd3fc;
 
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.live-status-bar {
+    position: static !important;
+    top: auto !important;
+    z-index: 1 !important;
+    margin: 10px auto 20px !important;
 }
