@@ -1144,3 +1144,43 @@ button:active {
         opacity: 1;
     }
 }
+
+.live-status-bar {
+
+    position: sticky;
+
+    top: 10px;
+
+    z-index: 999;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 14px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 20px;
+}
+
+.live-status-bar span {
+
+    padding: 10px 16px;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    backdrop-filter: blur(12px);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #7dd3fc;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
