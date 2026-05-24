@@ -50,6 +50,7 @@ function updateQuestionCounter() {
 }
 
 async function startInterview() {
+    interviewActive = true;
     await startCamera();
     await getQuestion();
 }
@@ -214,6 +215,7 @@ async function nextQuestion() {
 }
 
 function finishInterview() {
+    interviewActive = false;
     clearInterval(timerInterval);
     clearTimeout(autoNextTimer);
 
@@ -896,8 +898,11 @@ let faceInterval = null;
 let mediaRecorder;
 let recordedChunks = [];
 let warningCount = 0;
+let interviewActive = false;
 
 function addCheatingWarning(reason) {
+    if (!interviewActive) return;
+
     warningCount++;
     alert(`Warning ${warningCount}: ${reason}`);
     console.log("CHEATING WARNING:", reason);
@@ -985,10 +990,6 @@ document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
         addCheatingWarning("Tab switched during interview");
     }
-});
-
-window.addEventListener("blur", () => {
-    addCheatingWarning("Window focus lost");
 });
 
 document.addEventListener("copy", () => {
