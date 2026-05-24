@@ -900,11 +900,27 @@ let recordedChunks = [];
 let warningCount = 0;
 let interviewActive = false;
 
+function showToast(message) {
+    const toastBox = document.getElementById("toastBox");
+
+    if (!toastBox) return;
+
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerText = message;
+
+    toastBox.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
 function addCheatingWarning(reason) {
     if (!interviewActive) return;
 
     warningCount++;
-    alert(`Warning ${warningCount}: ${reason}`);
+    showToast(`Warning ${warningCount}: ${reason}`);
     console.log("CHEATING WARNING:", reason);
 }
 
@@ -999,3 +1015,4 @@ document.addEventListener("copy", () => {
 document.addEventListener("paste", () => {
     addCheatingWarning("Paste action detected");
 });
+

@@ -1111,3 +1111,36 @@ button:active {
     text-decoration: none;
     font-weight: bold;
 }
+
+#toastBox {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: grid;
+    gap: 12px;
+}
+
+.toast {
+    min-width: 260px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.95);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    animation: slideIn 0.3s ease;
+    font-weight: 700;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(40px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
