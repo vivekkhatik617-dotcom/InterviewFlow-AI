@@ -56,6 +56,7 @@ async function startInterview() {
 }
 
 async function getQuestion() {
+    const branch = document.getElementById("branch")?.value || "Computer Science";
     const role = document.getElementById("role")?.value || "Frontend Developer";
     const category = document.getElementById("category")?.value || "Frontend";
     const difficultyEl = document.getElementById("difficulty");
@@ -80,6 +81,7 @@ async function getQuestion() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+                branch,
                 role,
                 difficulty: getAutoDifficulty(),
                 category,

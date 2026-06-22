@@ -9,7 +9,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { GoogleGenAI } = require("@google/genai");
 
+const { createClient } = require('@supabase/supabase-js');
+
 const app = express();
+const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY
+);
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors());
@@ -133,15 +139,30 @@ app.post("/api/login", async (req, res) => {
 
 app.post("/api/save-interview", async (req, res) => {
     try {
-        const interview = await Interview.create(req.body);
+
+        const { data, error } = await supabase
+            .from("interview_history")
+            .insert([req.body])
+            .select();
+
+        if (error) {
+            console.log(error);
+            return res.status(500).json({
+                success: false,
+                error: error.message
+            });
+        }
 
         res.json({
             success: true,
-            interview,
+            interview: data
         });
+
     } catch (error) {
         console.log("SAVE INTERVIEW ERROR:", error.message);
-        res.status(500).json({ message: "Interview save failed" });
+        res.status(500).json({
+            success: false
+        });
     }
 });
 
@@ -180,19 +201,37 @@ app.get("/api/interviews/:userId", async (req, res) => {
 
 app.post("/question", async (req, res) => {
     try {
-        const { role, difficulty, category } = req.body;
+        const { branch, role, difficulty, category } = req.body;
 
         const prompt = `
 Generate ONLY ONE interview question.
 
+Branch: ${branch}
 Role: ${role}
 Difficulty: ${difficulty}
 Category: ${category}
 
 Rules:
-- Short
-- Professional
-- No explanation
+
+If branch is Electrical Engineering,
+generate only Electrical Engineering interview questions.
+
+If branch is Computer Science,
+generate only Computer Science interview questions.
+
+If branch is Mechanical Engineering,
+generate only Mechanical Engineering interview questions.
+
+If branch is Civil Engineering,
+generate only Civil Engineering interview questions.
+
+If branch is Electronics & Communication,
+generate only ECE interview questions.
+
+If branch is Human Resources,
+generate only HR interview questions.
+
+Return only one interview question.
 `;
 
         const response = await ai.models.generateContent({
@@ -284,6 +323,25 @@ app.delete("/api/interviews/:userId", async (req, res) => {
             message: "History clear failed",
         });
     }
+});
+
+app.get("/test-supabase", async (req, res) => {
+
+    const { data, error } = await supabase
+        .from("user")
+        .insert([
+            {
+                name: "Vivek Test",
+                email: "test@test.com"
+            }
+        ])
+        .select();
+
+    if (error) {
+        return res.json(error);
+    }
+
+    res.json(data);
 });
 
 const PORT = process.env.PORT || 3000;
