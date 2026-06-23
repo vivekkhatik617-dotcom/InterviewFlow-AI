@@ -857,7 +857,20 @@ button:active {
     }
 
     .select-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .select-grid label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: white;
+    }
+
+    .select-grid select {
+        width: 100%;
     }
 
     button {

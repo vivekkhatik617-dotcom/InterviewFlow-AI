@@ -186,136 +186,61 @@
 
                 <section class="card">
 
-                    <h2>
-                        Select Interview Role
-                    </h2>
+                    <h2>🎯 Start AI Interview</h2>
 
                     <div class="select-grid">
 
-                        <h2>Select Interview Role</h2>
+                        <div>
+                            <label>🎓 Branch</label>
+                            <select id="branch">
+                                <option value="Computer Science">Computer Science (CSE)</option>
+                                <option value="Electrical Engineering">Electrical Engineering (EE)</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                                <option value="Electronics & Communication">Electronics & Communication (ECE)</option>
+                                <option value="Information Technology">Information Technology (IT)</option>
+                                <option value="Human Resources">Human Resources (HR)</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Finance">Finance</option>
+                            </select>
+                        </div>
 
-                        <select id="branch">
+                        <div>
+                            <label>💼 Role</label>
+                            <select id="role">
+                                <option value="Frontend Developer">Frontend Developer</option>
+                                <option value="Backend Developer">Backend Developer</option>
+                                <option value="Java Developer">Java Developer</option>
+                                <option value="C++ Developer">C++ Developer</option>
+                                <option value="HR Interview">HR Interview</option>
+                            </select>
+                        </div>
 
-                            <option value="Computer Science">
-                                Computer Science (CSE)
-                            </option>
+                        <div>
+                            <label>📚 Category</label>
+                            <select id="category">
+                                <option value="Frontend">Frontend</option>
+                                <option value="Backend">Backend</option>
+                                <option value="React">React</option>
+                                <option value="Node.js">Node.js</option>
+                                <option value="Java">Java</option>
+                                <option value="Python">Python</option>
+                                <option value="DSA">DSA</option>
+                                <option value="HR Interview">HR Interview</option>
+                                <option value="System Design">System Design</option>
+                            </select>
+                        </div>
 
-                            <option value="Electrical Engineering">
-                                Electrical Engineering (EE)
-                            </option>
-
-                            <option value="Mechanical Engineering">
-                                Mechanical Engineering
-                            </option>
-
-                            <option value="Civil Engineering">
-                                Civil Engineering
-                            </option>
-
-                            <option value="Electronics & Communication">
-                                Electronics & Communication (ECE)
-                            </option>
-
-                            <option value="Information Technology">
-                                Information Technology (IT)
-                            </option>
-
-                            <option value="Human Resources">
-                                Human Resources (HR)
-                            </option>
-
-                            <option value="Marketing">
-                                Marketing
-                            </option>
-
-                            <option value="Finance">
-                                Finance
-                            </option>
-
-                        </select>
-
-                        <select id="role">
-
-                            <option value="Frontend Developer">
-                                Frontend Developer
-                            </option>
-
-                            <option value="Backend Developer">
-                                Backend Developer
-                            </option>
-
-                            <option value="Java Developer">
-                                Java Developer
-                            </option>
-
-                            <option value="C++ Developer">
-                                C++ Developer
-                            </option>
-
-                            <option value="HR Interview">
-                                HR Interview
-                            </option>
-
-                        </select>
-
-                        <select id="category">
-
-                            <option value="Frontend">
-                                Frontend
-                            </option>
-
-                            <option value="Backend">
-                                Backend
-                            </option>
-
-                            <option value="React">
-                                React
-                            </option>
-
-                            <option value="Node.js">
-                                Node.js
-                            </option>
-
-                            <option value="Java">
-                                Java
-                            </option>
-
-                            <option value="Python">
-                                Python
-                            </option>
-
-                            <option value="DSA">
-                                DSA
-                            </option>
-
-                            <option value="HR Interview">
-                                HR Interview
-                            </option>
-
-                            <option value="System Design">
-                                System Design
-                            </option>
-
-                        </select>
-
-                        <select id="difficulty">
-
-                            <option value="Easy">
-                                Easy
-                            </option>
-
-                            <option value="Medium">
-                                Medium
-                            </option>
-
-                            <option value="Hard">
-                                Hard
-                            </option>
-
-                        </select>
+                        <div>
+                            <label>⚡ Difficulty</label>
+                            <select id="difficulty">
+                                <option value="Easy">Easy</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Hard">Hard</option>
+                            </select>
+                        </div>
 
                     </div>
-
                     <button onclick="getQuestion()">
                         Generate Question
                     </button>
