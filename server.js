@@ -56,9 +56,8 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
 });
 
-app.get("/", (req, res) => {
-    res.send("InterviewFlow AI Backend Running 🚀");
-});
+
+
 
 app.get("/api/test", (req, res) => {
     res.json({ message: "API working ✅" });
