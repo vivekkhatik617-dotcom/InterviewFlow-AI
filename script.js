@@ -1017,4 +1017,3 @@ document.addEventListener("copy", () => {
 document.addEventListener("paste", () => {
     addCheatingWarning("Paste action detected");
 });
-
