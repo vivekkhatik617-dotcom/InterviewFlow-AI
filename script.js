@@ -888,6 +888,10 @@ async function loadFaceAI() {
         "https://justadudewhohacks.github.io/face-api.js/models"
     );
 
+    await faceapi.nets.faceLandmark68Net.loadFromUri(
+        "https://justadudewhohacks.github.io/face-api.js/models"
+    );
+
     console.log("Face AI Loaded ✅");
 }
 
