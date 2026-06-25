@@ -937,6 +937,7 @@ async function detectFaceConfidence() {
 
     faceInterval = setInterval(async () => {
         try {
+
             const detections = await faceapi
                 .detectAllFaces(
                     video,
@@ -944,17 +945,54 @@ async function detectFaceConfidence() {
                 )
                 .withFaceLandmarks();
 
-            if (detections.length === 1) {
-                confidenceText.innerHTML = "High ✅";
-                eyeText.innerHTML = "Looking at Camera ✅";
-            } else if (detections.length > 1) {
-                confidenceText.innerHTML = "Multiple Faces ⚠️";
-                eyeText.innerHTML = "Possible Cheating 🚫";
-                addCheatingWarning("Multiple people detected");
-            } else {
-                confidenceText.innerHTML = "Low ❌";
+            if (detections.length === 0) {
+
+                confidenceText.innerHTML = "20%";
                 eyeText.innerHTML = "No Face Detected ❌";
+
             }
+
+            else if (detections.length > 1) {
+
+                confidenceText.innerHTML = "45%";
+                eyeText.innerHTML = "Multiple Faces ⚠️";
+
+                addCheatingWarning("Multiple people detected");
+
+            }
+
+            else {
+
+                const face = detections[0];
+                const box = face.detection.box;
+
+                const centerX = box.x + box.width / 2;
+                const videoCenter = video.videoWidth / 2;
+
+                const difference = Math.abs(centerX - videoCenter);
+
+                if (difference < video.videoWidth * 0.15) {
+
+                    confidenceText.innerHTML = "95%";
+                    eyeText.innerHTML = "Good Eye Contact ✅";
+
+                }
+
+                else if (difference < video.videoWidth * 0.30) {
+
+                    confidenceText.innerHTML = "70%";
+                    eyeText.innerHTML = "Look at Camera 👀";
+
+                }
+
+                else {
+
+                    confidenceText.innerHTML = "50%";
+                    eyeText.innerHTML = "Poor Eye Contact ⚠️";
+
+                }
+            }
+
         } catch (error) {
             console.log("FACE DETECTION ERROR:", error);
         }
