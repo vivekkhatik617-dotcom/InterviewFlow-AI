@@ -50,6 +50,9 @@ function updateQuestionCounter() {
 }
 
 async function startInterview() {
+    if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen();
+}
     interviewActive = true;
     await startCamera();
     await getQuestion();
@@ -800,10 +803,39 @@ async function detectFaceReal() {
         return;
     }
 
-    if (detections.length > 1) {
-        if (confidenceScore) confidenceScore.innerText = "45%";
-        if (eyeStatus) eyeStatus.innerText = "Multiple Faces Detected ⚠️";
-        return;
+    if (detections.length === 1) {
+
+        const landmarks = detections[0].landmarks;
+
+        const leftEye = landmarks.getLeftEye();
+        const rightEye = landmarks.getRightEye();
+
+        const leftEyeCenter =
+            leftEye.reduce((sum, p) => sum + p.x, 0) / leftEye.length;
+
+        const rightEyeCenter =
+            rightEye.reduce((sum, p) => sum + p.x, 0) / rightEye.length;
+
+        const faceBox = detections[0].detection.box;
+
+        const faceCenter =
+            faceBox.x + (faceBox.width / 2);
+
+        const eyeCenter =
+            (leftEyeCenter + rightEyeCenter) / 2;
+
+        const difference =
+            Math.abs(faceCenter - eyeCenter);
+
+        confidenceText.innerHTML = "High ✅";
+
+        if (difference < 20) {
+            eyeText.innerHTML = "Looking at Camera ✅";
+        } else {
+            eyeText.innerHTML = "Looking Away ⚠️";
+            addCheatingWarning("User looking away");
+        }
+
     }
 
     const box = detections[0].box;
@@ -882,6 +914,17 @@ document.addEventListener("DOMContentLoaded", () => {
     updateQuestionCounter();
 });
 
+document.addEventListener("fullscreenchange", () => {
+
+    if (!document.fullscreenElement && interviewActive) {
+
+        addCheatingWarning(
+            "Fullscreen mode exited"
+        );
+    }
+
+});
+
 async function loadFaceAI() {
 
     await faceapi.nets.tinyFaceDetector.loadFromUri(
@@ -904,6 +947,7 @@ let faceInterval = null;
 let mediaRecorder;
 let recordedChunks = [];
 let warningCount = 0;
+const MAX_WARNINGS = 3;
 let interviewActive = false;
 
 function showToast(message) {
@@ -923,11 +967,37 @@ function showToast(message) {
 }
 
 function addCheatingWarning(reason) {
+
     if (!interviewActive) return;
 
     warningCount++;
-    showToast(`Warning ${warningCount}: ${reason}`);
+
+    showToast(`Warning ${warningCount}/${MAX_WARNINGS}: ${reason}`);
+
     console.log("CHEATING WARNING:", reason);
+
+    if (warningCount >= MAX_WARNINGS) {
+
+        interviewActive = false;
+
+        clearInterval(timerInterval);
+        clearInterval(faceInterval);
+
+        alert(
+            "🚫 Interview Terminated.\n\nReason: Too many cheating warnings."
+        );
+
+        const questionText =
+            document.getElementById("questionText");
+
+        if (questionText) {
+
+            questionText.innerHTML = `
+                <h2>🚫 Interview Terminated</h2>
+                <p>Too many cheating warnings detected.</p>
+            `;
+        }
+    }
 }
 
 async function detectFaceConfidence() {
