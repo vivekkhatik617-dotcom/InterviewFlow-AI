@@ -13,6 +13,7 @@ let autoNextTimer = null;
 let scoreChartInstance = null;
 let cameraStream = null;
 let faceDetectionInterval = null;
+let faceInterval = null;
 
 function getSavedUser() {
     return JSON.parse(localStorage.getItem("user"));
@@ -752,6 +753,7 @@ async function startCamera() {
 }
 
 async function detectFaceReal() {
+    console.log("1. detectFaceConfidence called");
     const video = document.getElementById("camera");
     const confidenceScore = document.getElementById("confidenceScore");
     const eyeStatus = document.getElementById("eyeStatus");
@@ -947,7 +949,6 @@ window.addEventListener("load", async () => {
     console.log("FACE API READY 🚀");
 });
 
-let faceInterval = null;
 let mediaRecorder;
 let recordedChunks = [];
 let warningCount = 0;
@@ -1013,7 +1014,12 @@ async function detectFaceConfidence() {
 
     clearInterval(faceInterval);
 
+console.log("2. Interval starting");
+
     faceInterval = setInterval(async () => {
+
+        console.log("3. Interval running");
+
         try {
 
             const detections = await faceapi
