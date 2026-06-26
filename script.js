@@ -14,6 +14,7 @@ let scoreChartInstance = null;
 let cameraStream = null;
 let faceDetectionInterval = null;
 let faceInterval = null;
+let noFaceCount = 0;
 
 function getSavedUser() {
     return JSON.parse(localStorage.getItem("user"));
@@ -1014,7 +1015,7 @@ async function detectFaceConfidence() {
 
     clearInterval(faceInterval);
 
-console.log("2. Interval starting");
+    console.log("2. Interval starting");
 
     faceInterval = setInterval(async () => {
 
@@ -1025,7 +1026,10 @@ console.log("2. Interval starting");
             const detections = await faceapi
                 .detectAllFaces(
                     video,
-                    new faceapi.TinyFaceDetectorOptions()
+                    new faceapi.TinyFaceDetectorOptions({
+                        inputSize: 416,
+                        scoreThreshold: 0.15
+                    })
                 )
                 .withFaceLandmarks();
 
@@ -1033,8 +1037,14 @@ console.log("2. Interval starting");
 
             if (detections.length === 0) {
 
-                confidenceText.innerHTML = "20%";
-                eyeText.innerHTML = "No Face Detected ❌";
+                noFaceCount++;
+
+                if (noFaceCount >= 3) {
+
+                    confidenceText.innerHTML = "20%";
+                    eyeText.innerHTML = "No Face Detected ❌";
+
+                }
 
             }
 
@@ -1048,6 +1058,8 @@ console.log("2. Interval starting");
             }
 
             else {
+
+                noFaceCount = 0;
 
                 const face = detections[0];
                 const box = face.detection.box;
