@@ -51,8 +51,8 @@ function updateQuestionCounter() {
 
 async function startInterview() {
     if (document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen();
-}
+        document.documentElement.requestFullscreen();
+    }
     interviewActive = true;
     await startCamera();
     await getQuestion();
@@ -739,7 +739,10 @@ async function startCamera() {
 
             console.log("VIDEO STARTED ✅");
 
-            detectFaceConfidence();
+            setTimeout(() => {
+                detectFaceConfidence();
+            }, 3000);
+
         };
 
     } catch (error) {
@@ -936,6 +939,7 @@ async function loadFaceAI() {
     );
 
     console.log("Face AI Loaded ✅");
+    console.log("FACE API READY 🚀");
 }
 
 window.addEventListener("load", async () => {
@@ -1018,6 +1022,8 @@ async function detectFaceConfidence() {
                     new faceapi.TinyFaceDetectorOptions()
                 )
                 .withFaceLandmarks();
+
+            console.log("Faces Found:", detections.length);
 
             if (detections.length === 0) {
 
