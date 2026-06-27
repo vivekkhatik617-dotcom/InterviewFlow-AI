@@ -1023,6 +1023,9 @@ async function detectFaceConfidence() {
 
         try {
 
+            console.log("VIDEO CHECK:", video);
+            console.log("SIZE:", video.videoWidth, video.videoHeight);
+
             const detections = await faceapi
                 .detectAllFaces(
                     video,
@@ -1032,6 +1035,8 @@ async function detectFaceConfidence() {
                     })
                 )
                 .withFaceLandmarks();
+
+            console.log("RAW DETECTIONS:", detections);
 
             console.log("Faces Found:", detections.length);
 
