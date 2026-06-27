@@ -1,13 +1,13 @@
 import {
     FilesetResolver,
     FaceLandmarker
-} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22";
 
 const vision = await FilesetResolver.forVisionTasks(
-    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm"
 );
 
-const faceLandmarker = await FaceLandmarker.createFromOptions(
+window.faceLandmarker = await FaceLandmarker.createFromOptions(
     vision,
     {
         baseOptions: {
@@ -20,3 +20,4 @@ const faceLandmarker = await FaceLandmarker.createFromOptions(
 );
 
 console.log("✅ MediaPipe Face Mesh Loaded");
+console.log(window.faceLandmarker);
