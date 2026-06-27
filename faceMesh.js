@@ -21,3 +21,23 @@ window.faceLandmarker = await FaceLandmarker.createFromOptions(
 
 console.log("✅ MediaPipe Face Mesh Loaded");
 console.log(window.faceLandmarker);
+console.log("GLOBAL TEST:", window.faceLandmarker);
+
+setInterval(() => {
+
+    const video = document.getElementById("camera");
+
+    if (!video) return;
+
+    const result =
+        window.faceLandmarker.detectForVideo(
+            video,
+            performance.now()
+        );
+
+    console.log(
+        "LANDMARKS:",
+        result.faceLandmarks.length
+    );
+
+}, 2000);
