@@ -23,26 +23,36 @@ console.log("✅ MediaPipe Face Mesh Loaded");
 console.log(window.faceLandmarker);
 console.log("GLOBAL TEST:", window.faceLandmarker);
 
-/*setInterval(() => {
+setInterval(() => {
 
     const video = document.getElementById("camera");
 
     if (
         !video ||
-        video.readyState !== 4 ||
-        video.videoWidth === 0
-    ) return;
+        video.readyState < 2 ||
+        video.videoWidth === 0 ||
+        video.videoHeight === 0
+    ) {
+        return;
+    }
 
-    const result =
-        window.faceLandmarker.detectForVideo(
-            video,
-            performance.now()
+    try {
+
+        const result =
+            window.faceLandmarker.detectForVideo(
+                video,
+                performance.now()
+            );
+
+        console.log(
+            "LANDMARKS:",
+            result.faceLandmarks.length
         );
 
-    console.log(
-        "LANDMARKS:",
-        result.faceLandmarks.length
-    );
+    } catch (err) {
+
+        console.log("FaceMesh Skip:", err);
+
+    }
 
 }, 2000);
-*/
