@@ -139,6 +139,8 @@ app.post("/api/login", async (req, res) => {
 app.post("/api/save-interview", async (req, res) => {
     try {
 
+        console.log("DATA AA RHA HAI:", req.body);
+
         const { data, error } = await supabase
             .from("interview_history")
             .insert([req.body])
