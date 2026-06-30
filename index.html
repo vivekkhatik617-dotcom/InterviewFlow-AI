@@ -14,6 +14,32 @@
 
 <body>
 
+    <div id="instructionModal" class="instruction-modal" style="display:none;">
+        <div class="instruction-box">
+
+            <h2>📋 Interview Instructions</h2>
+
+            <p>🟢 Easy Level (Question 1–5) → 2 Minutes</p>
+
+            <p>🟡 Medium Level (Question 6–10) → 5 Minutes</p>
+
+            <p>🔴 Hard Level (Question 11–15) → 8 Minutes</p>
+
+            <hr>
+
+            <p>📹 Camera ON rakho</p>
+
+            <p>🛡️ Anti-Cheat enabled hai</p>
+
+            <p>⏱️ Time khatam hone par answer submit karna hoga</p>
+
+            <button onclick="confirmInterview()">
+                ✅ I Understand
+            </button>
+
+        </div>
+    </div>
+
     <div class="live-status-bar">
 
         <span>🤖 AI Active</span>
@@ -176,7 +202,7 @@
 
                     </div>
 
-                    <button onclick="startInterview()">
+                    <button onclick="showInstructions()">
                         🚀 Start Interview
                     </button>
 
@@ -230,16 +256,9 @@
                                 <option value="System Design">System Design</option>
                             </select>
                         </div>
-
-                        <div>
-                            <label>⚡ Difficulty</label>
-                            <p id="difficultyStatus">
-                                Auto Adaptive (Easy → Medium → Hard)
-                            </p>
-                        </div>
-
+                        
                     </div>
-                    
+
                     <button onclick="getQuestion()">
                         Generate Question
                     </button>

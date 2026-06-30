@@ -1204,3 +1204,31 @@ button:active {
     z-index: 1 !important;
     margin: 10px auto 20px !important;
 }
+
+.instruction-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.instruction-box {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+.instruction-box button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    cursor: pointer;
+}

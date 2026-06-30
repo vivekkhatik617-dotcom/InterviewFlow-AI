@@ -1169,3 +1169,12 @@ document.addEventListener("copy", () => {
 document.addEventListener("paste", () => {
     addCheatingWarning("Paste action detected");
 });
+
+function showInstructions() {
+    document.getElementById("instructionModal").style.display = "flex";
+}
+
+async function confirmInterview() {
+    document.getElementById("instructionModal").style.display = "none";
+    await startInterview();
+}
