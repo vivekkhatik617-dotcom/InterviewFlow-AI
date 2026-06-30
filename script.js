@@ -64,20 +64,31 @@ async function getQuestion() {
     const branch = document.getElementById("branch")?.value || "Computer Science";
     const role = document.getElementById("role")?.value || "Frontend Developer";
     const category = document.getElementById("category")?.value || "Frontend";
-    const difficultyEl = document.getElementById("difficulty");
     const questionText = document.getElementById("questionText");
     const feedbackText = document.getElementById("feedbackText");
     const answerBox = document.getElementById("answer");
     const status = document.querySelector(".interview-status");
-
-    if (difficultyEl) difficultyEl.value = getAutoDifficulty();
     if (feedbackText) feedbackText.innerHTML = "";
     if (answerBox) answerBox.value = "";
     if (!questionText) return;
 
-    updateQuestionCounter();
-    questionText.innerHTML = `<div class="loader"></div>`;
-    if (status) status.innerHTML = "🤖 AI is generating question...";
+    function updateQuestionCounter() {
+
+        const counter = document.getElementById("questionCounter");
+
+        if (counter) {
+            counter.innerText =
+                `Question ${currentQuestionIndex + 1} / ${totalQuestions}`;
+        }
+
+        const diff =
+            document.getElementById("difficultyStatus");
+
+        if (diff) {
+            diff.innerText =
+                `⚡ Difficulty: ${getAutoDifficulty()}`;
+        }
+    }
 
     startTimer();
 

@@ -233,14 +233,13 @@
 
                         <div>
                             <label>⚡ Difficulty</label>
-                            <select id="difficulty">
-                                <option value="Easy">Easy</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Hard">Hard</option>
-                            </select>
+                            <p id="difficultyStatus">
+                                Auto Adaptive (Easy → Medium → Hard)
+                            </p>
                         </div>
 
                     </div>
+                    
                     <button onclick="getQuestion()">
                         Generate Question
                     </button>
@@ -442,7 +441,7 @@
     <script src="https://unpkg.com/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
     <script src="script.js"></script>
-    
+
     <script type="module" src="faceMesh.js"></script>
 
     <div id="toastBox"></div>
