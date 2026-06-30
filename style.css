@@ -1212,59 +1212,53 @@ button:active {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.7);
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 9999;
 }
 
 .instruction-box {
-    background: white;
+    background: #ffffff;
+    color: #111111;
+    width: 90%;
+    max-width: 550px;
     padding: 25px;
     border-radius: 15px;
-    max-width: 500px;
-    width: 90%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    text-align: left;
+}
+
+.instruction-box h2 {
     text-align: center;
+    color: #111111;
+    margin-bottom: 20px;
+}
+
+.instruction-box p {
+    color: #222222;
+    font-size: 18px;
+    margin: 12px 0;
+    line-height: 1.5;
+}
+
+.instruction-box hr {
+    margin: 15px 0;
 }
 
 .instruction-box button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-
-.instruction-content h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #111;
-}
-
-.instruction-content ul {
-    list-style: none;
-    padding: 0;
-}
-
-.instruction-content li {
-    margin: 15px 0;
-    font-size: 18px;
-    color: #222;
-}
-
-.instruction-content label {
-    display: block;
-    margin-top: 20px;
-    font-size: 18px;
-    color: #111;
-}
-
-.instruction-content button {
     width: 100%;
-    margin-top: 15px;
+    margin-top: 20px;
     padding: 12px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     font-size: 18px;
+    font-weight: bold;
     background: #4CAF50;
     color: white;
+}
+
+.instruction-box button:hover {
+    opacity: 0.9;
 }
