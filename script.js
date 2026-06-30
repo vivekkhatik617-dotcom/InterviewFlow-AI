@@ -320,7 +320,7 @@ async function loadHistory() {
             historyList.innerHTML += `
                 <div class="history-card">
                     <h3>⭐ Score: ${item.score || 0}/10</h3>
-                    <div class="history-date">${new Date(item.createdAt).toLocaleString()}</div>
+                   <div class="history-date">${new Date(item.created_at).toLocaleString()}</div>
                     <p>⏱️ Time Taken: ${formatTime(item.timeTaken || 0)}</p>
                     <p><b>Question:</b> ${(item.question || "").substring(0, 80)}...</p>
                     <p><b>Your Answer:</b> ${(item.answer || "").substring(0, 100)}...</p>

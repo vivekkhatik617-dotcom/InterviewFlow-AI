@@ -314,24 +314,32 @@ Improved Answer:
 
 app.delete("/api/interviews/:userId", async (req, res) => {
     try {
-        await Interview.deleteMany({
-            userId: req.params.userId,
-        });
+
+        const { error } = await supabase
+            .from("interview_history")
+            .delete()
+            .eq("userId", req.params.userId);
+
+        if (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
 
         res.json({
-            success: true,
-            message: "History cleared successfully",
+            success: true
         });
-    } catch (error) {
-        console.log("CLEAR HISTORY ERROR:", error.message);
+
+    } catch (err) {
+
+        console.log(err);
 
         res.status(500).json({
-            success: false,
-            message: "History clear failed",
+            success: false
         });
     }
 });
-
 app.get("/test-supabase", async (req, res) => {
 
     const { data, error } = await supabase
