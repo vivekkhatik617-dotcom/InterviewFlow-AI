@@ -1232,3 +1232,39 @@ button:active {
     padding: 10px 20px;
     cursor: pointer;
 }
+
+.instruction-content h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #111;
+}
+
+.instruction-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.instruction-content li {
+    margin: 15px 0;
+    font-size: 18px;
+    color: #222;
+}
+
+.instruction-content label {
+    display: block;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #111;
+}
+
+.instruction-content button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    background: #4CAF50;
+    color: white;
+}

@@ -1175,6 +1175,16 @@ function showInstructions() {
 }
 
 async function confirmInterview() {
+
+    const agree =
+        document.getElementById("agreeRules");
+
+    if (!agree.checked) {
+        alert("Please accept instructions first.");
+        return;
+    }
+
     document.getElementById("instructionModal").style.display = "none";
+
     await startInterview();
 }
