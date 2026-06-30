@@ -183,23 +183,29 @@ app.post("/api/interviews", async (req, res) => {
 
 app.get("/api/interviews/:userId", async (req, res) => {
     try {
-        const interviews = await Interview.find({
-            userId: req.params.userId,
-        }).sort({ createdAt: -1 });
+
+        const { data, error } = await supabase
+            .from("interview_history")
+            .select("*")
+            .eq("userId", req.params.userId)
+            .order("created_at", { ascending: false });
+
+        if (error) throw error;
 
         res.json({
             success: true,
-            interviews,
+            interviews: data
         });
+
     } catch (error) {
         console.log("GET INTERVIEWS ERROR:", error.message);
+
         res.status(500).json({
             success: false,
-            interviews: [],
+            interviews: []
         });
     }
 });
-
 app.post("/question", async (req, res) => {
     try {
         const { branch, role, difficulty, category } = req.body;
