@@ -10,7 +10,6 @@ let timeLeft = 120;
 let timeTaken = 0;
 let timerInterval = null;
 let autoNextTimer = null;
-let scoreChartInstance = null;
 let cameraStream = null;
 let faceDetectionInterval = null;
 let faceInterval = null;
@@ -209,7 +208,6 @@ async function getFeedback() {
         await loadHistory();
         await loadUserProfile();
         await generatePerformanceReport();
-        await loadAnalyticsChart();
 
     } catch (error) {
         if (feedbackText) feedbackText.innerText = "Server Error. Feedback failed.";
@@ -376,7 +374,6 @@ async function clearHistory() {
         await loadHistory();
         await loadUserProfile();
         await generatePerformanceReport();
-        await loadAnalyticsChart();
 
         alert("History Cleared Successfully ✅");
     } catch (error) {
@@ -537,58 +534,6 @@ async function loadUserProfile() {
         if (profileTime) profileTime.textContent = formatTime(totalTimeProfile);
     } catch (error) {
         console.log("PROFILE ERROR:", error);
-    }
-}
-
-async function loadAnalyticsChart() {
-    const user = getSavedUser();
-    if (!user) return;
-
-    const chartCanvas = document.getElementById("scoreChart");
-    if (!chartCanvas) return;
-
-    try {
-        const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
-        const data = await response.json();
-        const history = data.interviews || [];
-
-        const labels = history.slice().reverse().map((_, index) => `Interview ${index + 1}`);
-        const scores = history.slice().reverse().map((item) => item.score || 0);
-
-        if (scoreChartInstance) scoreChartInstance.destroy();
-
-        scoreChartInstance = new Chart(chartCanvas, {
-            type: "line",
-            data: {
-                labels,
-                datasets: [
-                    {
-                        label: "Interview Scores",
-                        data: scores,
-                        borderColor: "#38bdf8",
-                        backgroundColor: "rgba(56,189,248,0.2)",
-                        tension: 0.4,
-                        fill: true,
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { labels: { color: "white" } },
-                },
-                scales: {
-                    x: { ticks: { color: "white" } },
-                    y: {
-                        ticks: { color: "white" },
-                        beginAtZero: true,
-                        max: 10,
-                    },
-                },
-            },
-        });
-    } catch (error) {
-        console.log("CHART ERROR:", error);
     }
 }
 
@@ -927,7 +872,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadHistory();
     loadUserProfile();
     generatePerformanceReport();
-    loadAnalyticsChart();
     updateQuestionCounter();
 });
 
