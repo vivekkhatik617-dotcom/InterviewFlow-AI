@@ -1175,6 +1175,15 @@ function showInstructions() {
 }
 
 async function confirmInterview() {
+
+    const agree = document.getElementById("agreeRules");
+
+    if (!agree.checked) {
+        alert("Pehle instructions accept karo.");
+        return;
+    }
+
     document.getElementById("instructionModal").style.display = "none";
+
     await startInterview();
 }
