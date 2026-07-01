@@ -15,6 +15,95 @@ let faceDetectionInterval = null;
 let faceInterval = null;
 let noFaceCount = 0;
 
+const branchData = {
+    "Computer Science": {
+        roles: [
+            "Frontend Developer",
+            "Backend Developer",
+            "Java Developer",
+            "Python Developer",
+            "Full Stack Developer"
+        ],
+        categories: [
+            "Frontend",
+            "Backend",
+            "React",
+            "Node.js",
+            "Java",
+            "Python",
+            "DSA",
+            "System Design"
+        ]
+    },
+
+    "Electrical Engineering": {
+        roles: [
+            "Electrical Engineer",
+            "Power System Engineer",
+            "Control System Engineer",
+            "Substation Engineer",
+            "Maintenance Engineer"
+        ],
+        categories: [
+            "Electrical Machines",
+            "Power System",
+            "Network Theory",
+            "Control System",
+            "Power Electronics",
+            "Measurements"
+        ]
+    },
+
+    "Mechanical Engineering": {
+        roles: [
+            "Mechanical Engineer",
+            "Production Engineer",
+            "Design Engineer",
+            "Automobile Engineer"
+        ],
+        categories: [
+            "Thermodynamics",
+            "Fluid Mechanics",
+            "Heat Transfer",
+            "Manufacturing",
+            "SOM"
+        ]
+    },
+
+    "Civil Engineering": {
+        roles: [
+            "Civil Engineer",
+            "Site Engineer",
+            "Structural Engineer"
+        ],
+        categories: [
+            "RCC",
+            "Surveying",
+            "Transportation",
+            "Geotechnical"
+        ]
+    }
+};
+
+function updateBranchOptions() {
+
+    const branch = document.getElementById("branch").value;
+
+    const roleSelect = document.getElementById("role");
+    const categorySelect = document.getElementById("category");
+
+    roleSelect.innerHTML = "";
+    categorySelect.innerHTML = "";
+
+    branchData[branch].roles.forEach(role => {
+        roleSelect.innerHTML += `<option value="${role}">${role}</option>`;
+    });
+
+    branchData[branch].categories.forEach(cat => {
+        categorySelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+    });
+}
+
 function getSavedUser() {
     return JSON.parse(localStorage.getItem("user"));
 }
@@ -1131,3 +1220,7 @@ async function confirmInterview() {
 
     await startInterview();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    updateBranchOptions();
+});
