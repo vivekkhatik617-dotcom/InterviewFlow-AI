@@ -82,7 +82,77 @@ const branchData = {
             "Transportation",
             "Geotechnical"
         ]
+    },
+
+    "Electronics & Communication": {
+        roles: [
+            "Electronics Engineer",
+            "Embedded Engineer",
+            "Communication Engineer"
+        ],
+        categories: [
+            "Digital Electronics",
+            "Signals & Systems",
+            "Communication Systems",
+            "Microprocessors"
+        ]
+    },
+
+    "Information Technology": {
+        roles: [
+            "Software Developer",
+            "Web Developer",
+            "Cloud Engineer"
+        ],
+        categories: [
+            "Frontend",
+            "Backend",
+            "Database",
+            "Networking"
+        ]
+    },
+
+    "Human Resources": {
+        roles: [
+            "HR Executive",
+            "Recruiter",
+            "Talent Acquisition"
+        ],
+        categories: [
+            "Recruitment",
+            "Employee Relations",
+            "HR Policies"
+        ]
+    },
+
+    "Marketing": {
+        roles: [
+            "Marketing Executive",
+            "Digital Marketer",
+            "SEO Specialist"
+        ],
+        categories: [
+            "Digital Marketing",
+            "SEO",
+            "Social Media",
+            "Branding"
+        ]
+    },
+
+    "Finance": {
+        roles: [
+            "Financial Analyst",
+            "Accountant",
+            "Investment Analyst"
+        ],
+        categories: [
+            "Accounting",
+            "Taxation",
+            "Financial Management",
+            "Investment"
+        ]
     }
+
 };
 
 function updateBranchOptions() {
