@@ -268,41 +268,91 @@ app.post("/feedback", async (req, res) => {
         }
 
         const prompt = `
-You are an expert AI Interview Coach.
+You are an expert technical interviewer.
 
-Question:
-${question}
+Generate ONLY ONE interview question.
 
-Candidate Answer:
-${answer}
+Selected Details:
+
+Branch: ${branch}
+
+Role: ${role}
+
+Category: ${category}
+
+Difficulty: ${difficulty}
 
 Rules:
-- Be honest but easy to understand.
-- Keep the feedback SHORT.
-- Maximum 8-10 lines.
-- Never write long paragraphs.
-- Don't use headings like Technical Accuracy, Communication, Missing Points.
-- If answer is nonsense or irrelevant, score should be between 0-2.
-- If answer is good, appreciate briefly but still suggest one improvement.
 
-Return ONLY in this format:
+1. Question MUST belong to the selected Branch.
 
-⭐ Score:
-X/10
+2. Question MUST belong to the selected Role.
 
-✅ Good:
-• Point 1
-• Point 2
+3. Question MUST belong to the selected Category.
 
-❌ Improve:
-• Point 1
-• Point 2
+4. Never ask questions from another branch.
 
-💡 Better Answer:
-(Write a short interview-ready answer in 4-6 lines.)
+5. Never mix categories.
 
-🎯 Tip:
-(One simple interview tip.)
+Examples:
+
+Electrical Engineering
+- Power System → Relay, Circuit Breaker, Fault Analysis, Protection
+- Electrical Machines → Transformer, Motor, Generator
+- Network Theory → KCL, KVL, Thevenin, Norton
+- Control System → Stability, Root Locus, Bode Plot
+- Power Electronics → Rectifier, Inverter, Chopper
+- Measurements → Instruments, Errors, Sensors
+
+Computer Science
+- Frontend → HTML, CSS, JavaScript
+- Backend → Node.js, Express, APIs
+- React → Hooks, State, Props
+- Java → OOP, Collections
+- Python → Functions, OOP
+- DSA → Trees, Graphs, Arrays
+- System Design → Scalability, Load Balancer
+
+Mechanical Engineering
+- Thermodynamics
+- SOM
+- Fluid Mechanics
+- Heat Transfer
+- Manufacturing
+
+Civil Engineering
+- RCC
+- Surveying
+- Transportation
+- Geotechnical
+
+Electronics & Communication
+- Digital Electronics
+- Analog Electronics
+- Signals & Systems
+- Communication Systems
+- Microprocessors
+
+Human Resources
+- Recruitment
+- HR Policies
+- Employee Relations
+
+Marketing
+- Digital Marketing
+- SEO
+- Branding
+- Social Media Marketing
+
+Finance
+- Accounting
+- Taxation
+- Financial Management
+- Investment
+
+Generate ONLY ONE interview question.
+
+Return ONLY the question.
 `;
 
         const response = await ai.models.generateContent({
