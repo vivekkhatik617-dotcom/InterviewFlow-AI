@@ -268,9 +268,7 @@ app.post("/feedback", async (req, res) => {
         }
 
         const prompt = `
-You are an expert Senior Technical Interviewer with 15+ years of experience.
-
-Evaluate the candidate's answer professionally.
+You are an expert AI Interview Coach.
 
 Question:
 ${question}
@@ -278,45 +276,33 @@ ${question}
 Candidate Answer:
 ${answer}
 
-Evaluation Rules:
+Rules:
+- Be honest but easy to understand.
+- Keep the feedback SHORT.
+- Maximum 8-10 lines.
+- Never write long paragraphs.
+- Don't use headings like Technical Accuracy, Communication, Missing Points.
+- If answer is nonsense or irrelevant, score should be between 0-2.
+- If answer is good, appreciate briefly but still suggest one improvement.
 
-1. Be strict but fair.
-2. If the answer is irrelevant, nonsense, copied words like "hello", "hi", "ok", "idk", "I don't know", score must be between 0–2.
-3. Never give high marks for incomplete answers.
-4. Judge technical accuracy, communication, confidence and completeness.
-5. If the answer is partially correct, explain what is missing.
-6. If the answer is excellent, still suggest improvements.
-7. Keep Improved Answer interview-ready.
-8. Never praise blindly.
+Return ONLY in this format:
 
-Return EXACTLY in this format:
-
-Overall Score: X/10
-
-Technical Accuracy:
+⭐ Score:
 X/10
 
-Communication:
-X/10
-
-Strengths:
-• Point 1
-• Point 2
-• Point 3
-
-Weaknesses:
+✅ Good:
 • Point 1
 • Point 2
 
-Missing Points:
+❌ Improve:
 • Point 1
 • Point 2
 
-Improved Answer:
-(Write a professional interview answer.)
+💡 Better Answer:
+(Write a short interview-ready answer in 4-6 lines.)
 
-Interview Tip:
-(One practical tip for the candidate.)
+🎯 Tip:
+(One simple interview tip.)
 `;
 
         const response = await ai.models.generateContent({
