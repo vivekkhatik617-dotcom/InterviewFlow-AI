@@ -274,14 +274,6 @@ Generate ONLY ONE interview question.
 
 Selected Details:
 
-Branch: ${branch}
-
-Role: ${role}
-
-Category: ${category}
-
-Difficulty: ${difficulty}
-
 Rules:
 
 1. Question MUST belong to the selected Branch.
