@@ -202,13 +202,6 @@ function getAutoDifficulty() {
     return "Hard";
 }
 
-function updateQuestionCounter() {
-    const counter = document.getElementById("questionCounter");
-    if (counter) {
-        counter.innerText = `Question ${currentQuestionIndex + 1} / ${totalQuestions}`;
-    }
-}
-
 async function startInterview() {
     if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen();
@@ -270,6 +263,9 @@ async function getQuestion() {
         }
 
         currentQuestion = data.question;
+
+        updateQuestionCounter();   // 👈 YE LINE ADD KAR
+
         typeText(questionText, data.question);
 
         if (status) status.innerHTML = "🎤 AI asked a question";
