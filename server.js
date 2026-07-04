@@ -268,7 +268,9 @@ app.post("/feedback", async (req, res) => {
         }
 
         const prompt = `
-You are a strict technical interviewer.
+You are an expert Senior Technical Interviewer with 15+ years of experience.
+
+Evaluate the candidate's answer professionally.
 
 Question:
 ${question}
@@ -276,22 +278,45 @@ ${question}
 Candidate Answer:
 ${answer}
 
-Rules:
-- Be strict and honest.
-- If answer is nonsense, irrelevant, too short, or like "hello", "hi", "idk", score must be 0, 1, or 2 only.
-- Do not give high score for placeholder answers.
-- Judge technical correctness.
-- Keep response short and clear.
+Evaluation Rules:
 
-Response format exactly:
+1. Be strict but fair.
+2. If the answer is irrelevant, nonsense, copied words like "hello", "hi", "ok", "idk", "I don't know", score must be between 0–2.
+3. Never give high marks for incomplete answers.
+4. Judge technical accuracy, communication, confidence and completeness.
+5. If the answer is partially correct, explain what is missing.
+6. If the answer is excellent, still suggest improvements.
+7. Keep Improved Answer interview-ready.
+8. Never praise blindly.
 
-Score: X/10
+Return EXACTLY in this format:
 
-Feedback:
-...
+Overall Score: X/10
+
+Technical Accuracy:
+X/10
+
+Communication:
+X/10
+
+Strengths:
+• Point 1
+• Point 2
+• Point 3
+
+Weaknesses:
+• Point 1
+• Point 2
+
+Missing Points:
+• Point 1
+• Point 2
 
 Improved Answer:
-...
+(Write a professional interview answer.)
+
+Interview Tip:
+(One practical tip for the candidate.)
 `;
 
         const response = await ai.models.generateContent({
