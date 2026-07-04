@@ -221,25 +221,7 @@ async function getQuestion() {
     const status = document.querySelector(".interview-status");
     if (feedbackText) feedbackText.innerHTML = "";
     if (answerBox) answerBox.value = "";
-    if (!questionText) return;
-
-    function updateQuestionCounter() {
-
-        const counter = document.getElementById("questionCounter");
-
-        if (counter) {
-            counter.innerText =
-                `Question ${currentQuestionIndex + 1} / ${totalQuestions}`;
-        }
-
-        const diff =
-            document.getElementById("difficultyStatus");
-
-        if (diff) {
-            diff.innerText =
-                `⚡ Difficulty: ${getAutoDifficulty()}`;
-        }
-    }
+    if (!questionText) return; 
 
     startTimer();
 
@@ -272,6 +254,23 @@ async function getQuestion() {
     } catch (error) {
         questionText.innerText = "Server issue hai. Thodi der baad try karo.";
         console.log(error);
+    }
+}
+
+function updateQuestionCounter() {
+
+    const counter = document.getElementById("questionCounter");
+
+    if (counter) {
+        counter.innerText =
+            `Question ${currentQuestionIndex + 1} / ${totalQuestions}`;
+    }
+
+    const diff = document.getElementById("difficultyStatus");
+
+    if (diff) {
+        diff.innerText =
+            `⚡ Difficulty: ${getAutoDifficulty()}`;
     }
 }
 
