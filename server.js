@@ -270,84 +270,42 @@ app.post("/feedback", async (req, res) => {
         const prompt = `
 You are an expert technical interviewer.
 
-Generate ONLY ONE interview question.
+Question:
+${question}
 
-Selected Details:
+Candidate Answer:
+${answer}
 
-Rules:
+Evaluate the answer and respond ONLY in this format:
 
-1. Question MUST belong to the selected Branch.
+Overall Score: X/10
 
-2. Question MUST belong to the selected Role.
+Technical Accuracy:
+X/10
 
-3. Question MUST belong to the selected Category.
+Communication:
+X/10
 
-4. Never ask questions from another branch.
+Strengths:
+• point 1
+• point 2
 
-5. Never mix categories.
+Weaknesses:
+• point 1
+• point 2
 
-Examples:
+Missing Points:
+• point 1
+• point 2
 
-Electrical Engineering
-- Power System → Relay, Circuit Breaker, Fault Analysis, Protection
-- Electrical Machines → Transformer, Motor, Generator
-- Network Theory → KCL, KVL, Thevenin, Norton
-- Control System → Stability, Root Locus, Bode Plot
-- Power Electronics → Rectifier, Inverter, Chopper
-- Measurements → Instruments, Errors, Sensors
+Improved Answer:
+(short improved answer)
 
-Computer Science
-- Frontend → HTML, CSS, JavaScript
-- Backend → Node.js, Express, APIs
-- React → Hooks, State, Props
-- Java → OOP, Collections
-- Python → Functions, OOP
-- DSA → Trees, Graphs, Arrays
-- System Design → Scalability, Load Balancer
+Interview Tip:
+(one short practical tip)
 
-Mechanical Engineering
-- Thermodynamics
-- SOM
-- Fluid Mechanics
-- Heat Transfer
-- Manufacturing
-
-Civil Engineering
-- RCC
-- Surveying
-- Transportation
-- Geotechnical
-
-Electronics & Communication
-- Digital Electronics
-- Analog Electronics
-- Signals & Systems
-- Communication Systems
-- Microprocessors
-
-Human Resources
-- Recruitment
-- HR Policies
-- Employee Relations
-
-Marketing
-- Digital Marketing
-- SEO
-- Branding
-- Social Media Marketing
-
-Finance
-- Accounting
-- Taxation
-- Financial Management
-- Investment
-
-Generate ONLY ONE interview question.
-
-Return ONLY the question.
+Keep the feedback concise and professional.
 `;
-
-        console.log(branch, role, category, difficulty);
 
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
