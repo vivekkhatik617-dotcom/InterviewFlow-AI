@@ -325,6 +325,8 @@ Keep the feedback concise and professional.
     }
 });
 
+console.log("Resume route hit ✅");
+
 app.post("/analyze-resume", upload.single("resume"), async (req, res) => {
     try {
         if (!req.file) {
