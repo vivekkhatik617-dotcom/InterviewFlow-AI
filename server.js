@@ -347,6 +347,8 @@ Generate ONLY ONE interview question.
 Return ONLY the question.
 `;
 
+        console.log(branch, role, category, difficulty);
+
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
