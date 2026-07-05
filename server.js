@@ -325,6 +325,65 @@ Keep the feedback concise and professional.
     }
 });
 
+app.post("/analyze-resume", upload.single("resume"), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                analysis: "Please upload a PDF resume."
+            });
+        }
+
+        const pdfData = await pdfParse(req.file.buffer);
+        const resumeText = pdfData.text;
+
+        const prompt = `
+You are an ATS Resume Expert.
+
+Analyze the following resume.
+
+Resume:
+${resumeText}
+
+Return ONLY in this format:
+
+📄 Resume Score: X/10
+
+✅ Strong Skills
+• ...
+
+❌ Missing Skills
+• ...
+
+💼 Best Suitable Roles
+• ...
+
+📈 ATS Compatibility
+XX%
+
+🎯 Improvement Suggestions
+• ...
+• ...
+• ...
+`;
+
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+        });
+
+        res.json({
+            analysis: response.text || "Resume analysis failed."
+        });
+
+    } catch (error) {
+        console.log("RESUME ERROR:", error.message);
+
+        res.status(500).json({
+            analysis: "Resume analysis failed due to server error."
+        });
+    }
+});
+
 app.delete("/api/interviews/:userId", async (req, res) => {
     try {
 
