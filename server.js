@@ -328,6 +328,11 @@ Keep the feedback concise and professional.
 console.log("Resume route hit ✅");
 
 app.post("/analyze-resume", upload.single("resume"), async (req, res) => {
+
+    console.log("Resume route hit ✅");
+    console.log(req.file);
+    console.log(req.file?.originalname);
+
     try {
         if (!req.file) {
             return res.status(400).json({
