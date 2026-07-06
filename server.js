@@ -268,6 +268,7 @@ Return only one interview question.
 `;
 
         const analysis = await generateWithRetry(prompt);
+        console.log("ANALYSIS =", analysis);
 
         res.json({
             analysis: JSON.parse(analysis)
