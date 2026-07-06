@@ -405,14 +405,28 @@ XX%
 • ...
 • ...
 • ...
-Return ONLY valid JSON in this format:
+
+IMPORTANT RULES:
+
+- Resume Score: only one number out of 10.
+- ATS Score: only one percentage.
+- Strong Skills: Maximum 5 points.
+- Missing Skills: Maximum 5 points.
+- Best Roles: Maximum 3 roles.
+- Suggestions: Maximum 3 short actionable points.
+- Keep every skill under 3 words.
+- Do NOT explain anything.
+- Do NOT write paragraphs.
+- Return ONLY valid JSON.
+
+Return ONLY valid JSON:
 
 {
   "score": 0,
+  "ats": 0,
   "strongSkills": [],
   "missingSkills": [],
   "bestRoles": [],
-  "ats": 0,
   "suggestions": []
 }
 `;

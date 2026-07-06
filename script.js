@@ -744,33 +744,50 @@ async function analyzeResume() {
         result.innerHTML = `
 <div class="resume-card">
 
-    <h2>⭐ Resume Score: ${report.score}/10</h2>
+    <div class="resume-header">
 
-    <h3>📈 ATS Compatibility</h3>
-    <div class="progress">
-        <div class="progress-fill" style="width:${report.ats}%">
-            ${report.ats}%
+        <div class="score-card">
+            <h2>⭐ ${report.score}/10</h2>
+            <p>Resume Score</p>
         </div>
+
+        <div class="ats-card">
+            <h2>📈 ${report.ats}%</h2>
+            <p>ATS Score</p>
+        </div>
+
     </div>
 
     <h3>✅ Strong Skills</h3>
-    <ul>
-        ${report.strongSkills.map(skill => `<li>✅ ${skill}</li>`).join("")}
-    </ul>
+
+    <div class="skills-container">
+        ${report.strongSkills.map(skill =>
+            `<span class="skill good">${skill}</span>`
+        ).join("")}
+    </div>
 
     <h3>❌ Missing Skills</h3>
-    <ul>
-        ${report.missingSkills.map(skill => `<li>❌ ${skill}</li>`).join("")}
-    </ul>
+
+    <div class="skills-container">
+        ${report.missingSkills.map(skill =>
+            `<span class="skill bad">${skill}</span>`
+        ).join("")}
+    </div>
 
     <h3>💼 Best Roles</h3>
-    <ul>
-        ${report.bestRoles.map(role => `<li>💼 ${role}</li>`).join("")}
-    </ul>
 
-    <h3>🎯 Improvement Suggestions</h3>
-    <ul>
-        ${report.suggestions.map(item => `<li>👉 ${item}</li>`).join("")}
+    <div class="roles-container">
+        ${report.bestRoles.map(role =>
+            `<div class="role-card">${role}</div>`
+        ).join("")}
+    </div>
+
+    <h3>🎯 Top Suggestions</h3>
+
+    <ul class="suggestion-list">
+        ${report.suggestions.map(item =>
+            `<li>👉 ${item}</li>`
+        ).join("")}
     </ul>
 
 </div>
