@@ -704,393 +704,285 @@ function loadTheme() {
     }
 }
 
-async function analyzeResume() {
 
-    const fileInput = document.getElementById("resumeFile");
-    const result = document.getElementById("resumeResult");
 
-    if (!fileInput.files.length) {
-        alert("Please upload a PDF resume.");
-        return;
-    }
+        
 
-    const formData = new FormData();
-    formData.append("resume", fileInput.files[0]);
-
-    result.innerHTML = `<div class="loader"></div>`;
-
-    try {
-
-        const response = await fetch(`${API_URL}/analyze-resume`, {
-            method: "POST",
-            body: formData,
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            result.innerHTML = `
-            <div class="resume-card">
-                <h2>🤖 AI Server Busy</h2>
-                <p>${data.error || "Please try again after 30 seconds."}</p>
-            </div>
-            `;
-            return;
-        }
-
-        let report = data.analysis;
-
-        if (typeof report === "string") {
-            report = report
-                .replace(/```json/g, "")
-                .replace(/```/g, "")
-                .trim();
-
-            report = JSON.parse(report);
-        }
-
-        result.innerHTML = `
-<div class="resume-card">
-
-<div class="resume-header">
-
-<div class="score-card">
-<h2>⭐ ${report.score}/10</h2>
-<p>Resume Score</p>
-</div>
-
-<div class="ats-card">
-<h2>📈 ${report.ats}%</h2>
-<p>ATS Score</p>
-</div>
-
-</div>
-
-<h3>✅ Strong Skills</h3>
-
-<div class="skills-container">
-${report.strongSkills.map(skill => `
-<span class="skill good">${skill}</span>
-`).join("")}
-</div>
-
-<h3>❌ Missing Skills</h3>
-
-<div class="skills-container">
-${report.missingSkills.map(skill => `
-<span class="skill bad">${skill}</span>
-`).join("")}
-</div>
-
-<h3>💼 Best Roles</h3>
-
-<div class="roles-container">
-${report.bestRoles.map(role => `
-<div class="role-card">${role}</div>
-`).join("")}
-</div>
-
-<h3>🎯 Top Suggestions</h3>
-
-<ul class="suggestion-list">
-${report.suggestions.map(item => `
-<li>👉 ${item}</li>
-`).join("")}
-</ul>
-
-</div>
-`;
-
-    } catch (error) {
-
-        console.log(error);
-
-        result.innerHTML = `
-<div class="resume-card">
-<h2>🤖 AI Server Busy</h2>
-<p>Please wait 20–30 seconds and try again.</p>
-</div>
-`;
-
-    }
-
-}
-
-function speakQuestion() {
-    if (!currentQuestion) {
-        alert("Generate a question first");
-        return;
-    }
-
-    const speech = new SpeechSynthesisUtterance(currentQuestion);
-    speech.lang = "en-US";
-    speech.rate = 1;
-    window.speechSynthesis.speak(speech);
-}
-
-function startVoiceInput() {
-    const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-        alert("Voice recognition is not supported in this browser.");
-        return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-
-    recognition.onstart = () => {
-        alert("Listening... Speak now 🎤");
-    };
-
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        document.getElementById("answer").value = transcript;
-    };
-
-    recognition.onerror = (event) => {
-        console.log(event.error);
-        alert("Voice recognition error");
-    };
-
-    recognition.start();
-}
-
-async function downloadReportPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const user = getSavedUser() || {};
-
-    doc.setFont("helvetica");
-    doc.setFontSize(20);
-    doc.text("InterviewFlow AI Report", 20, 20);
-
-    doc.setFontSize(12);
-    doc.text(`User: ${user.name || "User"}`, 20, 35);
-
-    try {
-        const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
-        const data = await response.json();
-        const history = data.interviews || [];
-
-        doc.text(`Total Interviews: ${history.length}`, 20, 45);
-
-        let y = 60;
-
-        history.forEach((item, index) => {
-            if (y > 260) {
-                doc.addPage();
-                y = 20;
+        function speakQuestion() {
+            if (!currentQuestion) {
+                alert("Generate a question first");
+                return;
             }
 
-            doc.setFontSize(14);
-            doc.text(`Interview ${index + 1}`, 20, y);
-            y += 10;
-
-            doc.setFontSize(11);
-            doc.text(`Score: ${item.score || 0}/10`, 20, y);
-            y += 8;
-
-            doc.text(`Time Taken: ${formatTime(item.timeTaken || 0)}`, 20, y);
-            y += 8;
-
-            const question = doc.splitTextToSize(`Question: ${item.question || ""}`, 170);
-            doc.text(question, 20, y);
-            y += question.length * 7;
-
-            const answer = doc.splitTextToSize(`Answer: ${item.answer || ""}`, 170);
-            doc.text(answer, 20, y);
-            y += answer.length * 7 + 10;
-        });
-
-        doc.save("InterviewFlow-AI-Report.pdf");
-    } catch (error) {
-        console.log("PDF ERROR:", error);
-        alert("PDF download failed.");
-    }
-}
-
-async function startCamera() {
-    const video = document.getElementById("camera");
-    const confidenceScore = document.getElementById("confidenceScore");
-    const eyeStatus = document.getElementById("eyeStatus");
-
-    if (!video) return;
-
-    try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true,
-        });
-
-        video.srcObject = cameraStream;
-
-        if (confidenceScore) confidenceScore.innerText = "Detecting...";
-        if (eyeStatus) eyeStatus.innerText = "Camera Active";
-
-        video.onloadedmetadata = async () => {
-
-            await video.play();
-
-            console.log("VIDEO STARTED ✅");
-
-            setTimeout(() => {
-                detectFaceConfidence();
-            }, 3000);
-
-        };
-
-    } catch (error) {
-        alert("Camera access denied");
-        console.log(error);
-    }
-}
-
-async function detectFaceReal() {
-    console.log("1. detectFaceConfidence called");
-    const video = document.getElementById("camera");
-    const confidenceScore = document.getElementById("confidenceScore");
-    const eyeStatus = document.getElementById("eyeStatus");
-
-    if (!video || !window.faceapi) {
-        console.log("Face API not loaded");
-        return;
-    }
-
-    try {
-        await faceapi.nets.tinyFaceDetector.loadFromUri(
-            "https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/"
-        );
-    } catch (error) {
-        console.log("Face model load error:", error);
-        return;
-    }
-
-    clearInterval(faceDetectionInterval);
-
-    if (detection) {
-
-        confidenceText.innerHTML =
-            "🎯 Confidence: High ✅";
-
-        const leftEye = detection.landmarks.getLeftEye();
-        const rightEye = detection.landmarks.getRightEye();
-
-        if (leftEye && rightEye) {
-
-            eyeText.innerHTML =
-                "👀 Eye Contact: Looking at Camera ✅";
-
-        } else {
-
-            eyeText.innerHTML =
-                "👀 Eye Contact: Weak ⚠️";
+            const speech = new SpeechSynthesisUtterance(currentQuestion);
+            speech.lang = "en-US";
+            speech.rate = 1;
+            window.speechSynthesis.speak(speech);
         }
 
-    } else {
+        function startVoiceInput() {
+            const SpeechRecognition =
+                window.SpeechRecognition || window.webkitSpeechRecognition;
 
-        confidenceText.innerHTML =
-            "🎯 Confidence: Low ❌";
+            if (!SpeechRecognition) {
+                alert("Voice recognition is not supported in this browser.");
+                return;
+            }
 
-        eyeText.innerHTML =
-            "👀 Eye Contact: No Face ❌";
-    }
+            const recognition = new SpeechRecognition();
+            recognition.lang = "en-US";
 
-    if (!detections || detections.length === 0) {
-        if (confidenceScore) confidenceScore.innerText = "20%";
-        if (eyeStatus) eyeStatus.innerText = "Face Not Visible ❌";
-        return;
-    }
+            recognition.onstart = () => {
+                alert("Listening... Speak now 🎤");
+            };
 
-    if (detections.length === 1) {
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById("answer").value = transcript;
+            };
 
-        const landmarks = detections[0].landmarks;
+            recognition.onerror = (event) => {
+                console.log(event.error);
+                alert("Voice recognition error");
+            };
 
-        const leftEye = landmarks.getLeftEye();
-        const rightEye = landmarks.getRightEye();
-
-        const leftEyeCenter =
-            leftEye.reduce((sum, p) => sum + p.x, 0) / leftEye.length;
-
-        const rightEyeCenter =
-            rightEye.reduce((sum, p) => sum + p.x, 0) / rightEye.length;
-
-        const faceBox = detections[0].detection.box;
-
-        const faceCenter =
-            faceBox.x + (faceBox.width / 2);
-
-        const eyeCenter =
-            (leftEyeCenter + rightEyeCenter) / 2;
-
-        const difference =
-            Math.abs(faceCenter - eyeCenter);
-
-        confidenceText.innerHTML = "High ✅";
-
-        if (difference < 20) {
-            eyeText.innerHTML = "Looking at Camera ✅";
-        } else {
-            eyeText.innerHTML = "Looking Away ⚠️";
-            addCheatingWarning("User looking away");
+            recognition.start();
         }
 
-    }
+        async function downloadReportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const user = getSavedUser() || {};
 
-    const box = detections[0].box;
-    const centerX = box.x + box.width / 2;
-    const videoCenter = video.videoWidth / 2;
-    const difference = Math.abs(centerX - videoCenter);
+            doc.setFont("helvetica");
+            doc.setFontSize(20);
+            doc.text("InterviewFlow AI Report", 20, 20);
 
-    if (difference < video.videoWidth * 0.18) {
-        if (confidenceScore) confidenceScore.innerText = "92%";
-        if (eyeStatus) eyeStatus.innerText = "Good Eye Contact ✅";
-    } else {
-        if (confidenceScore) confidenceScore.innerText = "65%";
-        if (eyeStatus) eyeStatus.innerText = "Look at Camera 👀";
-    }
-}
+            doc.setFontSize(12);
+            doc.text(`User: ${user.name || "User"}`, 20, 35);
 
-async function showFinalReport() {
-    const user = getSavedUser();
-    const finalReport = document.getElementById("finalReport");
+            try {
+                const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
+                const data = await response.json();
+                const history = data.interviews || [];
 
-    if (!user) {
-        alert("Please login first");
-        return;
-    }
+                doc.text(`Total Interviews: ${history.length}`, 20, 45);
 
-    if (!finalReport) return;
+                let y = 60;
 
-    finalReport.innerHTML = `<div class="loader"></div>`;
+                history.forEach((item, index) => {
+                    if (y > 260) {
+                        doc.addPage();
+                        y = 20;
+                    }
 
-    try {
-        const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
-        const data = await response.json();
-        const history = data.interviews || [];
+                    doc.setFontSize(14);
+                    doc.text(`Interview ${index + 1}`, 20, y);
+                    y += 10;
 
-        if (history.length === 0) {
-            finalReport.innerHTML = `
+                    doc.setFontSize(11);
+                    doc.text(`Score: ${item.score || 0}/10`, 20, y);
+                    y += 8;
+
+                    doc.text(`Time Taken: ${formatTime(item.timeTaken || 0)}`, 20, y);
+                    y += 8;
+
+                    const question = doc.splitTextToSize(`Question: ${item.question || ""}`, 170);
+                    doc.text(question, 20, y);
+                    y += question.length * 7;
+
+                    const answer = doc.splitTextToSize(`Answer: ${item.answer || ""}`, 170);
+                    doc.text(answer, 20, y);
+                    y += answer.length * 7 + 10;
+                });
+
+                doc.save("InterviewFlow-AI-Report.pdf");
+            } catch (error) {
+                console.log("PDF ERROR:", error);
+                alert("PDF download failed.");
+            }
+        }
+
+        async function startCamera() {
+            const video = document.getElementById("camera");
+            const confidenceScore = document.getElementById("confidenceScore");
+            const eyeStatus = document.getElementById("eyeStatus");
+
+            if (!video) return;
+
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true,
+                });
+
+                video.srcObject = cameraStream;
+
+                if (confidenceScore) confidenceScore.innerText = "Detecting...";
+                if (eyeStatus) eyeStatus.innerText = "Camera Active";
+
+                video.onloadedmetadata = async () => {
+
+                    await video.play();
+
+                    console.log("VIDEO STARTED ✅");
+
+                    setTimeout(() => {
+                        detectFaceConfidence();
+                    }, 3000);
+
+                };
+
+            } catch (error) {
+                alert("Camera access denied");
+                console.log(error);
+            }
+        }
+
+        async function detectFaceReal() {
+            console.log("1. detectFaceConfidence called");
+            const video = document.getElementById("camera");
+            const confidenceScore = document.getElementById("confidenceScore");
+            const eyeStatus = document.getElementById("eyeStatus");
+
+            if (!video || !window.faceapi) {
+                console.log("Face API not loaded");
+                return;
+            }
+
+            try {
+                await faceapi.nets.tinyFaceDetector.loadFromUri(
+                    "https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/"
+                );
+            } catch (error) {
+                console.log("Face model load error:", error);
+                return;
+            }
+
+            clearInterval(faceDetectionInterval);
+
+            if (detection) {
+
+                confidenceText.innerHTML =
+                    "🎯 Confidence: High ✅";
+
+                const leftEye = detection.landmarks.getLeftEye();
+                const rightEye = detection.landmarks.getRightEye();
+
+                if (leftEye && rightEye) {
+
+                    eyeText.innerHTML =
+                        "👀 Eye Contact: Looking at Camera ✅";
+
+                } else {
+
+                    eyeText.innerHTML =
+                        "👀 Eye Contact: Weak ⚠️";
+                }
+
+            } else {
+
+                confidenceText.innerHTML =
+                    "🎯 Confidence: Low ❌";
+
+                eyeText.innerHTML =
+                    "👀 Eye Contact: No Face ❌";
+            }
+
+            if (!detections || detections.length === 0) {
+                if (confidenceScore) confidenceScore.innerText = "20%";
+                if (eyeStatus) eyeStatus.innerText = "Face Not Visible ❌";
+                return;
+            }
+
+            if (detections.length === 1) {
+
+                const landmarks = detections[0].landmarks;
+
+                const leftEye = landmarks.getLeftEye();
+                const rightEye = landmarks.getRightEye();
+
+                const leftEyeCenter =
+                    leftEye.reduce((sum, p) => sum + p.x, 0) / leftEye.length;
+
+                const rightEyeCenter =
+                    rightEye.reduce((sum, p) => sum + p.x, 0) / rightEye.length;
+
+                const faceBox = detections[0].detection.box;
+
+                const faceCenter =
+                    faceBox.x + (faceBox.width / 2);
+
+                const eyeCenter =
+                    (leftEyeCenter + rightEyeCenter) / 2;
+
+                const difference =
+                    Math.abs(faceCenter - eyeCenter);
+
+                confidenceText.innerHTML = "High ✅";
+
+                if (difference < 20) {
+                    eyeText.innerHTML = "Looking at Camera ✅";
+                } else {
+                    eyeText.innerHTML = "Looking Away ⚠️";
+                    addCheatingWarning("User looking away");
+                }
+
+            }
+
+            const box = detections[0].box;
+            const centerX = box.x + box.width / 2;
+            const videoCenter = video.videoWidth / 2;
+            const difference = Math.abs(centerX - videoCenter);
+
+            if (difference < video.videoWidth * 0.18) {
+                if (confidenceScore) confidenceScore.innerText = "92%";
+                if (eyeStatus) eyeStatus.innerText = "Good Eye Contact ✅";
+            } else {
+                if (confidenceScore) confidenceScore.innerText = "65%";
+                if (eyeStatus) eyeStatus.innerText = "Look at Camera 👀";
+            }
+        }
+
+        async function showFinalReport() {
+            const user = getSavedUser();
+            const finalReport = document.getElementById("finalReport");
+
+            if (!user) {
+                alert("Please login first");
+                return;
+            }
+
+            if (!finalReport) return;
+
+            finalReport.innerHTML = `<div class="loader"></div>`;
+
+            try {
+                const response = await fetch(`${API_URL}/api/interviews/${user.id}`);
+                const data = await response.json();
+                const history = data.interviews || [];
+
+                if (history.length === 0) {
+                    finalReport.innerHTML = `
                 <h2>📊 Final Report</h2>
                 <p>No interview data found.</p>
             `;
-            return;
-        }
+                    return;
+                }
 
-        let total = 0;
-        let best = 0;
-        let totalTime = 0;
+                let total = 0;
+                let best = 0;
+                let totalTime = 0;
 
-        history.forEach((item) => {
-            total += item.score || 0;
-            best = Math.max(best, item.score || 0);
-            totalTime += item.timeTaken || 0;
-        });
+                history.forEach((item) => {
+                    total += item.score || 0;
+                    best = Math.max(best, item.score || 0);
+                    totalTime += item.timeTaken || 0;
+                });
 
-        const avg = (total / history.length).toFixed(1);
+                const avg = (total / history.length).toFixed(1);
 
-        finalReport.innerHTML = `
+                finalReport.innerHTML = `
             <h2>📊 Final Interview Report</h2>
             <p>👤 User: <b>${user.name}</b></p>
             <p>🧠 Total Interviews: <b>${history.length}</b></p>
@@ -1098,278 +990,278 @@ async function showFinalReport() {
             <p>🏆 Best Score: <b>${best}/10</b></p>
             <p>⏱️ Total Time: <b>${formatTime(totalTime)}</b></p>
         `;
-    } catch (error) {
-        console.log("FINAL REPORT ERROR:", error);
-        finalReport.innerHTML = `<p>Failed to generate final report.</p>`;
-    }
-}
+            } catch (error) {
+                console.log("FINAL REPORT ERROR:", error);
+                finalReport.innerHTML = `<p>Failed to generate final report.</p>`;
+            }
+        }
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadTheme();
-    showLoggedInUser();
-    loadHistory();
-    loadUserProfile();
-    generatePerformanceReport();
-    updateQuestionCounter();
-});
+        document.addEventListener("DOMContentLoaded", () => {
+            loadTheme();
+            showLoggedInUser();
+            loadHistory();
+            loadUserProfile();
+            generatePerformanceReport();
+            updateQuestionCounter();
+        });
 
-document.addEventListener("fullscreenchange", () => {
+        document.addEventListener("fullscreenchange", () => {
 
-    if (!document.fullscreenElement && interviewActive) {
+            if (!document.fullscreenElement && interviewActive) {
 
-        addCheatingWarning(
-            "Fullscreen mode exited"
-        );
-    }
+                addCheatingWarning(
+                    "Fullscreen mode exited"
+                );
+            }
 
-});
+        });
 
-async function loadFaceAI() {
+        async function loadFaceAI() {
 
-    await faceapi.nets.tinyFaceDetector.loadFromUri(
-        "https://justadudewhohacks.github.io/face-api.js/models"
-    );
+            await faceapi.nets.tinyFaceDetector.loadFromUri(
+                "https://justadudewhohacks.github.io/face-api.js/models"
+            );
 
-    await faceapi.nets.faceLandmark68Net.loadFromUri(
-        "https://justadudewhohacks.github.io/face-api.js/models"
-    );
+            await faceapi.nets.faceLandmark68Net.loadFromUri(
+                "https://justadudewhohacks.github.io/face-api.js/models"
+            );
 
-    console.log("Face AI Loaded ✅");
-    console.log("FACE API READY 🚀");
-}
+            console.log("Face AI Loaded ✅");
+            console.log("FACE API READY 🚀");
+        }
 
-window.addEventListener("load", async () => {
-    await loadFaceAI();
-    console.log("FACE API READY 🚀");
-});
+        window.addEventListener("load", async () => {
+            await loadFaceAI();
+            console.log("FACE API READY 🚀");
+        });
 
-let mediaRecorder;
-let recordedChunks = [];
-let warningCount = 0;
-const MAX_WARNINGS = 3;
-let interviewActive = false;
+        let mediaRecorder;
+        let recordedChunks = [];
+        let warningCount = 0;
+        const MAX_WARNINGS = 3;
+        let interviewActive = false;
 
-function showToast(message) {
-    const toastBox = document.getElementById("toastBox");
+        function showToast(message) {
+            const toastBox = document.getElementById("toastBox");
 
-    if (!toastBox) return;
+            if (!toastBox) return;
 
-    const toast = document.createElement("div");
-    toast.className = "toast";
-    toast.innerText = message;
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerText = message;
 
-    toastBox.appendChild(toast);
+            toastBox.appendChild(toast);
 
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
-}
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
 
-function addCheatingWarning(reason) {
+        function addCheatingWarning(reason) {
 
-    if (!interviewActive) return;
+            if (!interviewActive) return;
 
-    warningCount++;
+            warningCount++;
 
-    showToast(`Warning ${warningCount}/${MAX_WARNINGS}: ${reason}`);
+            showToast(`Warning ${warningCount}/${MAX_WARNINGS}: ${reason}`);
 
-    console.log("CHEATING WARNING:", reason);
+            console.log("CHEATING WARNING:", reason);
 
-    if (warningCount >= MAX_WARNINGS) {
+            if (warningCount >= MAX_WARNINGS) {
 
-        interviewActive = false;
+                interviewActive = false;
 
-        clearInterval(timerInterval);
-        clearInterval(faceInterval);
+                clearInterval(timerInterval);
+                clearInterval(faceInterval);
 
-        alert(
-            "🚫 Interview Terminated.\n\nReason: Too many cheating warnings."
-        );
+                alert(
+                    "🚫 Interview Terminated.\n\nReason: Too many cheating warnings."
+                );
 
-        const questionText =
-            document.getElementById("questionText");
+                const questionText =
+                    document.getElementById("questionText");
 
-        if (questionText) {
+                if (questionText) {
 
-            questionText.innerHTML = `
+                    questionText.innerHTML = `
                 <h2>🚫 Interview Terminated</h2>
                 <p>Too many cheating warnings detected.</p>
             `;
-        }
-    }
-}
-
-async function detectFaceConfidence() {
-    const video = document.getElementById("camera");
-    const confidenceText = document.getElementById("confidenceScore");
-    const eyeText = document.getElementById("eyeStatus");
-
-    if (!video || !confidenceText || !eyeText) return;
-
-    clearInterval(faceInterval);
-
-    console.log("2. Interval starting");
-
-    faceInterval = setInterval(async () => {
-
-        console.log("3. Interval running");
-
-        try {
-
-            console.log("VIDEO CHECK:", video);
-            console.log("SIZE:", video.videoWidth, video.videoHeight);
-
-            const detections = await faceapi
-                .detectAllFaces(
-                    video,
-                    new faceapi.TinyFaceDetectorOptions({
-                        inputSize: 416,
-                        scoreThreshold: 0.15
-                    })
-                )
-                .withFaceLandmarks();
-
-            console.log("RAW DETECTIONS:", detections);
-
-            console.log("Faces Found:", detections.length);
-
-            if (detections.length === 0) {
-
-                noFaceCount++;
-
-                if (noFaceCount >= 3) {
-
-                    confidenceText.innerHTML = "20%";
-                    eyeText.innerHTML = "No Face Detected ❌";
-
-                }
-
-            }
-
-            else if (detections.length > 1) {
-
-                confidenceText.innerHTML = "45%";
-                eyeText.innerHTML = "Multiple Faces ⚠️";
-
-                addCheatingWarning("Multiple people detected");
-
-            }
-
-            else {
-
-                noFaceCount = 0;
-
-                const face = detections[0];
-                const box = face.detection.box;
-
-                const centerX = box.x + box.width / 2;
-                const videoCenter = video.videoWidth / 2;
-
-                const difference = Math.abs(centerX - videoCenter);
-
-                if (difference < video.videoWidth * 0.15) {
-
-                    confidenceText.innerHTML = "95%";
-                    eyeText.innerHTML = "Good Eye Contact ✅";
-
-                }
-
-                else if (difference < video.videoWidth * 0.30) {
-
-                    confidenceText.innerHTML = "70%";
-                    eyeText.innerHTML = "Look at Camera 👀";
-
-                }
-
-                else {
-
-                    confidenceText.innerHTML = "50%";
-                    eyeText.innerHTML = "Poor Eye Contact ⚠️";
-
                 }
             }
-
-        } catch (error) {
-            console.log("FACE DETECTION ERROR:", error);
         }
-    }, 2000);
-}
 
-function startRecording() {
-    const video = document.getElementById("camera");
+        async function detectFaceConfidence() {
+            const video = document.getElementById("camera");
+            const confidenceText = document.getElementById("confidenceScore");
+            const eyeText = document.getElementById("eyeStatus");
 
-    if (!video || !video.srcObject) {
-        alert("Camera not started");
-        return;
-    }
+            if (!video || !confidenceText || !eyeText) return;
 
-    recordedChunks = [];
-    mediaRecorder = new MediaRecorder(video.srcObject);
+            clearInterval(faceInterval);
 
-    mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-            recordedChunks.push(event.data);
+            console.log("2. Interval starting");
+
+            faceInterval = setInterval(async () => {
+
+                console.log("3. Interval running");
+
+                try {
+
+                    console.log("VIDEO CHECK:", video);
+                    console.log("SIZE:", video.videoWidth, video.videoHeight);
+
+                    const detections = await faceapi
+                        .detectAllFaces(
+                            video,
+                            new faceapi.TinyFaceDetectorOptions({
+                                inputSize: 416,
+                                scoreThreshold: 0.15
+                            })
+                        )
+                        .withFaceLandmarks();
+
+                    console.log("RAW DETECTIONS:", detections);
+
+                    console.log("Faces Found:", detections.length);
+
+                    if (detections.length === 0) {
+
+                        noFaceCount++;
+
+                        if (noFaceCount >= 3) {
+
+                            confidenceText.innerHTML = "20%";
+                            eyeText.innerHTML = "No Face Detected ❌";
+
+                        }
+
+                    }
+
+                    else if (detections.length > 1) {
+
+                        confidenceText.innerHTML = "45%";
+                        eyeText.innerHTML = "Multiple Faces ⚠️";
+
+                        addCheatingWarning("Multiple people detected");
+
+                    }
+
+                    else {
+
+                        noFaceCount = 0;
+
+                        const face = detections[0];
+                        const box = face.detection.box;
+
+                        const centerX = box.x + box.width / 2;
+                        const videoCenter = video.videoWidth / 2;
+
+                        const difference = Math.abs(centerX - videoCenter);
+
+                        if (difference < video.videoWidth * 0.15) {
+
+                            confidenceText.innerHTML = "95%";
+                            eyeText.innerHTML = "Good Eye Contact ✅";
+
+                        }
+
+                        else if (difference < video.videoWidth * 0.30) {
+
+                            confidenceText.innerHTML = "70%";
+                            eyeText.innerHTML = "Look at Camera 👀";
+
+                        }
+
+                        else {
+
+                            confidenceText.innerHTML = "50%";
+                            eyeText.innerHTML = "Poor Eye Contact ⚠️";
+
+                        }
+                    }
+
+                } catch (error) {
+                    console.log("FACE DETECTION ERROR:", error);
+                }
+            }, 2000);
         }
-    };
 
-    mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, {
-            type: "video/webm"
+        function startRecording() {
+            const video = document.getElementById("camera");
+
+            if (!video || !video.srcObject) {
+                alert("Camera not started");
+                return;
+            }
+
+            recordedChunks = [];
+            mediaRecorder = new MediaRecorder(video.srcObject);
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, {
+                    type: "video/webm"
+                });
+
+                const url = URL.createObjectURL(blob);
+                const downloadLink = document.getElementById("downloadVideo");
+
+                if (downloadLink) {
+                    downloadLink.href = url;
+                    downloadLink.download = "InterviewRecording.webm";
+                    downloadLink.style.display = "inline-block";
+                }
+            };
+
+            mediaRecorder.start();
+            alert("Recording Started 🔴");
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                mediaRecorder.stop();
+                alert("Recording Stopped ✅");
+            }
+        }
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                addCheatingWarning("Tab switched during interview");
+            }
         });
 
-        const url = URL.createObjectURL(blob);
-        const downloadLink = document.getElementById("downloadVideo");
+        document.addEventListener("copy", () => {
+            addCheatingWarning("Copy action detected");
+        });
 
-        if (downloadLink) {
-            downloadLink.href = url;
-            downloadLink.download = "InterviewRecording.webm";
-            downloadLink.style.display = "inline-block";
+        document.addEventListener("paste", () => {
+            addCheatingWarning("Paste action detected");
+        });
+
+        function showInstructions() {
+            document.getElementById("instructionModal").style.display = "flex";
         }
-    };
 
-    mediaRecorder.start();
-    alert("Recording Started 🔴");
-}
+        async function confirmInterview() {
 
-function stopRecording() {
-    if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
-        alert("Recording Stopped ✅");
-    }
-}
+            const agree = document.getElementById("agreeRules");
 
-document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-        addCheatingWarning("Tab switched during interview");
-    }
-});
+            if (!agree.checked) {
+                alert("Pehle instructions accept karo.");
+                return;
+            }
 
-document.addEventListener("copy", () => {
-    addCheatingWarning("Copy action detected");
-});
+            document.getElementById("instructionModal").style.display = "none";
 
-document.addEventListener("paste", () => {
-    addCheatingWarning("Paste action detected");
-});
+            await startInterview();
+        }
 
-function showInstructions() {
-    document.getElementById("instructionModal").style.display = "flex";
-}
-
-async function confirmInterview() {
-
-    const agree = document.getElementById("agreeRules");
-
-    if (!agree.checked) {
-        alert("Pehle instructions accept karo.");
-        return;
-    }
-
-    document.getElementById("instructionModal").style.display = "none";
-
-    await startInterview();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    updateBranchOptions();
-});
+        document.addEventListener("DOMContentLoaded", () => {
+            updateBranchOptions();
+        });
