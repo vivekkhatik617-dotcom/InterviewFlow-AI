@@ -221,7 +221,7 @@ async function getQuestion() {
     const status = document.querySelector(".interview-status");
     if (feedbackText) feedbackText.innerHTML = "";
     if (answerBox) answerBox.value = "";
-    if (!questionText) return; 
+    if (!questionText) return;
 
     startTimer();
 
@@ -725,7 +725,44 @@ async function analyzeResume() {
         });
 
         const data = await response.json();
-        result.innerText = data.analysis;
+
+        const report = data.analysis;
+
+        result.innerHTML = `
+<div class="resume-card">
+
+    <h2>⭐ Resume Score: ${report.score}/10</h2>
+
+    <h3>📈 ATS Compatibility</h3>
+    <div class="progress">
+        <div class="progress-fill" style="width:${report.ats}%">
+            ${report.ats}%
+        </div>
+    </div>
+
+    <h3>✅ Strong Skills</h3>
+    <ul>
+        ${report.strongSkills.map(skill => `<li>✅ ${skill}</li>`).join("")}
+    </ul>
+
+    <h3>❌ Missing Skills</h3>
+    <ul>
+        ${report.missingSkills.map(skill => `<li>❌ ${skill}</li>`).join("")}
+    </ul>
+
+    <h3>💼 Best Roles</h3>
+    <ul>
+        ${report.bestRoles.map(role => `<li>💼 ${role}</li>`).join("")}
+    </ul>
+
+    <h3>🎯 Improvement Suggestions</h3>
+    <ul>
+        ${report.suggestions.map(item => `<li>👉 ${item}</li>`).join("")}
+    </ul>
+
+</div>
+`;
+
     } catch (error) {
         result.innerText = "Resume analysis failed.";
         console.log(error);
