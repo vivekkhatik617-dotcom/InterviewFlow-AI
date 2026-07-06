@@ -270,6 +270,13 @@ Return only one interview question.
         const analysis = await generateWithRetry(prompt);
         console.log("ANALYSIS =", analysis);
 
+        const parsed = JSON.parse(analysis);
+        console.log("PARSED =", parsed);
+
+        res.json({
+            analysis: parsed
+        });
+
         res.json({
             analysis: JSON.parse(analysis)
         });
@@ -277,6 +284,8 @@ Return only one interview question.
         res.json({
             question: response.text || "Tell me about yourself.",
         });
+
+
     } catch (error) {
         console.log("QUESTION ERROR:", error.message);
         res.json({

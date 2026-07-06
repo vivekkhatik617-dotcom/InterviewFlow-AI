@@ -726,9 +726,19 @@ async function analyzeResume() {
 
         const data = await response.json();
 
-        console.log(data);
+        let report = data.analysis;
 
-        const report = data.analysis;
+        if (typeof report === "string") {
+
+            report = report
+                .replace(/```json/g, "")
+                .replace(/```/g, "")
+                .trim();
+
+            report = JSON.parse(report);
+        }
+
+        console.log(data);
         console.log(report);
 
         result.innerHTML = `
