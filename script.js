@@ -726,7 +726,10 @@ async function analyzeResume() {
 
         const data = await response.json();
 
+        console.log(data);
+
         const report = data.analysis;
+        console.log(report);
 
         result.innerHTML = `
 <div class="resume-card">
