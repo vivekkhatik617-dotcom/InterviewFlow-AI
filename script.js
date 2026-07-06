@@ -705,6 +705,7 @@ function loadTheme() {
 }
 
 async function analyzeResume() {
+
     const fileInput = document.getElementById("resumeFile");
     const result = document.getElementById("resumeResult");
 
@@ -719,6 +720,7 @@ async function analyzeResume() {
     result.innerHTML = `<div class="loader"></div>`;
 
     try {
+
         const response = await fetch(`${API_URL}/analyze-resume`, {
             method: "POST",
             body: formData,
@@ -726,10 +728,19 @@ async function analyzeResume() {
 
         const data = await response.json();
 
+        if (!response.ok) {
+            result.innerHTML = `
+            <div class="resume-card">
+                <h2>🤖 AI Server Busy</h2>
+                <p>${data.error || "Please try again after 30 seconds."}</p>
+            </div>
+            `;
+            return;
+        }
+
         let report = data.analysis;
 
         if (typeof report === "string") {
-
             report = report
                 .replace(/```json/g, "")
                 .replace(/```/g, "")
@@ -738,57 +749,71 @@ async function analyzeResume() {
             report = JSON.parse(report);
         }
 
-        console.log(data);
-        console.log(report);
-
         result.innerHTML = `
 <div class="resume-card">
 
-    <div class="resume-header">
+<div class="resume-header">
 
-        <div class="score-card">
-            <h2>⭐ ${report.score}/10</h2>
-            <p>Resume Score</p>
-        </div>
+<div class="score-card">
+<h2>⭐ ${report.score}/10</h2>
+<p>Resume Score</p>
+</div>
 
-        <div class="ats-card">
-            <h2>📈 ${report.ats}%</h2>
-            <p>ATS Score</p>
-        </div>
+<div class="ats-card">
+<h2>📈 ${report.ats}%</h2>
+<p>ATS Score</p>
+</div>
 
-    </div>
+</div>
 
-    <h3>✅ Strong Skills</h3>
+<h3>✅ Strong Skills</h3>
+
 <div class="skills-container">
 ${report.strongSkills.map(skill => `
 <span class="skill good">${skill}</span>
 `).join("")}
 </div>
 
-    <h3>❌ Missing Skills</h3>
+<h3>❌ Missing Skills</h3>
+
 <div class="skills-container">
 ${report.missingSkills.map(skill => `
 <span class="skill bad">${skill}</span>
 `).join("")}
 </div>
 
+<h3>💼 Best Roles</h3>
 
+<div class="roles-container">
+${report.bestRoles.map(role => `
+<div class="role-card">${role}</div>
+`).join("")}
+</div>
 
-    <h3>🎯 Top Suggestions</h3>
+<h3>🎯 Top Suggestions</h3>
 
-    <ul class="suggestion-list">
-        ${report.suggestions.map(item =>
-            `<li>👉 ${item}</li>`
-        ).join("")}
-    </ul>
+<ul class="suggestion-list">
+${report.suggestions.map(item => `
+<li>👉 ${item}</li>
+`).join("")}
+</ul>
 
 </div>
 `;
 
     } catch (error) {
-        result.innerText = "Resume analysis failed.";
+
         console.log(error);
+
+        result.innerHTML = `
+<div class="resume-card">
+<h2>🤖 AI Server Busy</h2>
+<p>Please wait 20–30 seconds and try again.</p>
+</div>
+`;
+
     }
+
 }
 
 function speakQuestion() {
