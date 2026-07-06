@@ -270,7 +270,7 @@ Return only one interview question.
         const analysis = await generateWithRetry(prompt);
 
         res.json({
-            analysis
+            analysis: JSON.parse(analysis)
         });
 
         res.json({
@@ -398,6 +398,16 @@ XX%
 • ...
 • ...
 • ...
+Return ONLY valid JSON in this format:
+
+{
+  "score": 0,
+  "strongSkills": [],
+  "missingSkills": [],
+  "bestRoles": [],
+  "ats": 0,
+  "suggestions": []
+}
 `;
 
         const response = await ai.models.generateContent({
