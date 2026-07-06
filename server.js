@@ -57,8 +57,33 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
 });
 
+async function generateWithRetry(prompt, retry = 3) {
+    for (let i = 0; i < retry; i++) {
+        try {
+            const response = await ai.models.generateContent({
+                model: "gemini-2.5-flash",
+                contents: prompt,
+            });
 
+            return response.text;
 
+        } catch (err) {
+
+            const msg = err.message || "";
+
+            if (msg.includes("503") || msg.includes("429")) {
+                console.log(`Gemini Busy... Retry ${i + 1}`);
+
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                continue;
+            }
+
+            throw err;
+        }
+    }
+
+    throw new Error("Gemini Busy");
+}
 
 app.get("/api/test", (req, res) => {
     res.json({ message: "API working ✅" });
@@ -242,9 +267,10 @@ generate only HR interview questions.
 Return only one interview question.
 `;
 
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: prompt,
+        const analysis = await generateWithRetry(prompt);
+
+        res.json({
+            analysis
         });
 
         res.json({
@@ -387,7 +413,7 @@ XX%
         console.log("RESUME ERROR:", error.message);
 
         res.status(500).json({
-            analysis: "Resume analysis failed due to server error."
+            analysis: "🤖 AI server abhi busy hai.\n\n20–30 seconds baad dubara try karein."
         });
     }
 });
