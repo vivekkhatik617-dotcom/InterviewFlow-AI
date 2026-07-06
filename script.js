@@ -759,28 +759,20 @@ async function analyzeResume() {
     </div>
 
     <h3>✅ Strong Skills</h3>
-
-    <div class="skills-container">
-        ${report.strongSkills.map(skill =>
-            `<span class="skill good">${skill}</span>`
-        ).join("")}
-    </div>
+<div class="skills-container">
+${report.strongSkills.map(skill => `
+<span class="skill good">${skill}</span>
+`).join("")}
+</div>
 
     <h3>❌ Missing Skills</h3>
+<div class="skills-container">
+${report.missingSkills.map(skill => `
+<span class="skill bad">${skill}</span>
+`).join("")}
+</div>
 
-    <div class="skills-container">
-        ${report.missingSkills.map(skill =>
-            `<span class="skill bad">${skill}</span>`
-        ).join("")}
-    </div>
 
-    <h3>💼 Best Roles</h3>
-
-    <div class="roles-container">
-        ${report.bestRoles.map(role =>
-            `<div class="role-card">${role}</div>`
-        ).join("")}
-    </div>
 
     <h3>🎯 Top Suggestions</h3>
 
