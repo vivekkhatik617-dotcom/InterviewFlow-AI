@@ -334,10 +334,7 @@ Interview Tip:
 Keep the feedback concise and professional.
 `;
 
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: prompt,
-        });
+        const analysis = await generateWithRetry(prompt);
 
         res.json({
             success: true,
