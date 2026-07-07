@@ -2191,3 +2191,115 @@ button:active {
     }
 
 }
+
+.hero-score {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 35px;
+
+    margin-bottom: 40px;
+
+}
+
+.score-box {
+
+    background: #161d2d;
+
+    padding: 35px;
+
+    border-radius: 25px;
+
+    text-align: center;
+
+    box-shadow: 0 20px 40px rgba(0, 0, 0, .35);
+
+    transition: .35s;
+
+}
+
+.score-box:hover {
+
+    transform: translateY(-8px);
+
+}
+
+.ring {
+
+    width: 180px;
+
+    height: 180px;
+
+    border-radius: 50%;
+
+    margin: auto;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+.score-ring {
+
+    background: conic-gradient(#22c55e 0 80%, #293548 80%);
+
+}
+
+.ats-ring {
+
+    background: conic-gradient(#3b82f6 0 91%, #293548 91%);
+
+}
+
+.ring-inner {
+
+    width: 140px;
+
+    height: 140px;
+
+    border-radius: 50%;
+
+    background: #0f172a;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+.ring-inner span {
+
+    font-size: 50px;
+
+    font-weight: 800;
+
+    color: white;
+
+}
+
+.ring-inner small {
+
+    font-size: 22px;
+
+    color: #94a3b8;
+
+}
+
+.score-box h2 {
+
+    margin-top: 25px;
+
+    font-size: 22px;
+
+    color: white;
+
+}
