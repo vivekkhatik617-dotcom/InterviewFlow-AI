@@ -15,7 +15,7 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 const supabase = createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_KEY
+    process.env.SUPABASE_ANON_KEY
 );
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -436,8 +436,27 @@ Return ONLY valid JSON:
             contents: prompt,
         });
 
+        let text = response.text;
+
+        // ```json ... ``` remove
+        text = text.replace(/```json/g, "")
+            .replace(/```/g, "")
+            .trim();
+
+        let analysis;
+
+        try {
+            analysis = JSON.parse(text);
+        } catch (err) {
+            console.log("Resume JSON Parse Error:", text);
+
+            return res.status(500).json({
+                error: "AI returned invalid JSON."
+            });
+        }
+
         res.json({
-            analysis: response.text || "Resume analysis failed."
+            analysis
         });
 
     } catch (error) {
