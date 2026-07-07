@@ -1543,3 +1543,199 @@ button:active {
     color: white;
 
 }
+
+/* ===========================
+   HIREMIND AI PREMIUM UI
+   PART-1
+=========================== */
+
+.resume-dashboard {
+    width: 95%;
+    max-width: 1150px;
+    margin: 40px auto;
+    padding: 35px;
+    border-radius: 28px;
+    background: linear-gradient(145deg, #0b1220, #111827);
+    border: 1px solid rgba(255, 255, 255, .08);
+    box-shadow:
+        0 20px 80px rgba(0, 0, 0, .45),
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+}
+
+.resume-dashboard::before {
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: #2563eb;
+    filter: blur(140px);
+    opacity: .18;
+    top: -120px;
+    right: -120px;
+}
+
+.resume-dashboard::after {
+    content: "";
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    background: #9333ea;
+    filter: blur(120px);
+    opacity: .18;
+    bottom: -100px;
+    left: -100px;
+}
+
+.dashboard-header {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.dashboard-header h1 {
+    font-size: 42px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: .5px;
+}
+
+.dashboard-header p {
+    margin-top: 12px;
+    color: #9ca3af;
+    font-size: 16px;
+}
+
+.score-section {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-bottom: 35px;
+}
+
+.score-card {
+
+    background: rgba(255, 255, 255, .05);
+
+    backdrop-filter: blur(14px);
+
+    border: 1px solid rgba(255, 255, 255, .08);
+
+    border-radius: 24px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    transition: .35s;
+
+}
+
+.score-card:hover {
+
+    transform: translateY(-8px);
+
+    border-color: #3b82f6;
+
+    box-shadow: 0 15px 40px rgba(59, 130, 246, .25);
+
+}
+
+.score-card h3 {
+
+    margin-top: 20px;
+
+    font-size: 18px;
+
+    color: #d1d5db;
+
+}
+
+.circle {
+
+    width: 140px;
+
+    height: 140px;
+
+    border-radius: 50%;
+
+    margin: auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: white;
+
+}
+
+.score {
+
+    background:
+        radial-gradient(circle at top, #4ade80, #15803d);
+
+}
+
+.ats {
+
+    background:
+        radial-gradient(circle at top, #60a5fa, #1d4ed8);
+
+}
+
+.circle span {
+
+    font-size: 46px;
+
+    font-weight: 800;
+
+}
+
+.circle small {
+
+    font-size: 20px;
+
+    opacity: .9;
+
+}
+
+.section-card {
+
+    position: relative;
+
+    z-index: 2;
+
+    margin-top: 25px;
+
+    background: rgba(255, 255, 255, .04);
+
+    backdrop-filter: blur(12px);
+
+    border-radius: 22px;
+
+    padding: 24px;
+
+    border: 1px solid rgba(255, 255, 255, .06);
+
+}
+
+.section-title {
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+    margin-bottom: 18px;
+
+    color: #fff;
+
+}
