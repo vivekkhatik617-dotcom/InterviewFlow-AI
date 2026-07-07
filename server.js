@@ -12,6 +12,11 @@ const { GoogleGenAI } = require("@google/genai");
 
 const { createClient } = require('@supabase/supabase-js');
 
+require("dotenv").config();
+
+console.log("URL =", process.env.SUPABASE_URL);
+console.log("KEY =", process.env.SUPABASE_ANON_KEY ? "FOUND" : "NOT FOUND");
+
 const app = express();
 const supabase = createClient(
     process.env.SUPABASE_URL,
