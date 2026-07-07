@@ -764,7 +764,91 @@ async function analyzeResume() {
 
         console.log(report);
 
-       
+        result.innerHTML = `
+<div class="resume-dashboard">
+
+    <div class="dashboard-header">
+        <h1>Resume Analysis</h1>
+        <p>AI Powered ATS & Career Report</p>
+    </div>
+
+    <div class="score-section">
+
+        <div class="score-card">
+            <div class="score-circle score">
+                <span>${report.score}</span>
+                <small>/10</small>
+            </div>
+            <h3>Resume Score</h3>
+        </div>
+
+        <div class="score-card">
+            <div class="score-circle ats">
+                <span>${report.ats}</span>
+                <small>%</small>
+            </div>
+            <h3>ATS Score</h3>
+        </div>
+
+    </div>
+
+    <div class="section-card">
+        <div class="section-title">💪 Strong Skills</div>
+
+        <div class="chips">
+            ${(report.strongSkills || []).map(skill => `
+                <span class="chip success">${skill}</span>
+            `).join("")}
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-title">⚠ Missing Skills</div>
+
+        <div class="chips">
+            ${(report.missingSkills || []).map(skill => `
+                <span class="chip danger">${skill}</span>
+            `).join("")}
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-title">💼 Best Roles</div>
+
+        <div class="roles-grid">
+            ${(report.bestRoles || []).map(role => `
+                <div class="role-box">
+                    <h4>${role}</h4>
+                    <span>Recommended</span>
+                </div>
+            `).join("")}
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-title">🚀 AI Suggestions</div>
+
+        <div class="tips">
+            ${(report.suggestions || []).map(item => `
+                <div class="tip-box">
+                    ✔ ${item}
+                </div>
+            `).join("")}
+        </div>
+    </div>
+
+    <div class="resume-buttons">
+        <button class="download-btn">
+            📄 Download Report
+        </button>
+
+        <button class="improve-btn">
+            ✨ Improve Resume
+        </button>
+    </div>
+
+</div>
+`;
 
     } catch (error) {
 
