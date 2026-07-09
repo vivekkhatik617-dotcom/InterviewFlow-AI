@@ -272,24 +272,13 @@ generate only HR interview questions.
 Return only one interview question.
 `;
 
-        const analysis = await generateWithRetry(prompt);
-        console.log("ANALYSIS =", analysis);
+        const question = await generateWithRetry(prompt);
 
-        const parsed = JSON.parse(analysis);
-        console.log("PARSED =", parsed);
+        console.log("QUESTION =", question);
 
         res.json({
-            analysis: parsed
+            question: question.trim()
         });
-
-        res.json({
-            analysis: JSON.parse(analysis)
-        });
-
-        res.json({
-            question: response.text || "Tell me about yourself.",
-        });
-
 
     } catch (error) {
         console.log("QUESTION ERROR:", error.message);
@@ -349,12 +338,13 @@ Interview Tip:
 Keep the feedback concise and professional.
 `;
 
-        const analysis = await generateWithRetry(prompt);
+        const feedback = await generateWithRetry(prompt);
 
         res.json({
             success: true,
-            feedback: response.text || "Score: 0/10\n\nFeedback:\nNo feedback generated.\n\nImproved Answer:\nTry again.",
+            feedback: feedback.trim()
         });
+        
     } catch (error) {
         console.log("FEEDBACK ERROR:", error.message);
         res.status(500).json({
