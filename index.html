@@ -225,7 +225,7 @@
 
                         <div>
                             <label>🎓 Branch</label>
-                          <select id="branch" onchange="updateBranchOptions()">
+                            <select id="branch" onchange="updateBranchOptions()">
                                 <option value="Computer Science">Computer Science (CSE)</option>
                                 <option value="Electrical Engineering">Electrical Engineering (EE)</option>
                                 <option value="Mechanical Engineering">Mechanical Engineering</option>
@@ -341,20 +341,41 @@
 
                 <!-- RESUME -->
 
-                <section class="card">
+                <section class="card premium-resume-card">
 
-                    <h2>
-                        📄 Resume Upload & AI Analysis
-                    </h2>
+                    <div class="resume-header">
+                        <div>
+                            <h2>📄 AI Resume Analyzer</h2>
+                            <p>Upload your resume and get an AI-powered ATS report.</p>
+                        </div>
+                    </div>
 
-                    <input type="file" id="resumeFile" accept=".pdf" />
+                    <div class="resume-upload-box">
 
-                    <button onclick="analyzeResume()">
-                        Analyze Resume
-                    </button>
+                        <input type="file" id="resumeFile" accept=".pdf">
 
-                    <div id="resumeResult">
-                        Resume analysis will appear here...
+                        <button class="analyze-btn" onclick="analyzeResume()">
+                            🚀 Analyze Resume
+                        </button>
+
+                    </div>
+
+                    <div id="resumeResult" class="resume-result">
+
+                        <div class="resume-placeholder">
+
+                            <div class="upload-icon">
+                                📄
+                            </div>
+
+                            <h3>No Resume Uploaded</h3>
+
+                            <p>
+                                Upload a PDF resume to generate an AI analysis.
+                            </p>
+
+                        </div>
+
                     </div>
 
                 </section>
